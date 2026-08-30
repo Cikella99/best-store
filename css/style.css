@@ -412,11 +412,13 @@ button {
 /* Trust strip */
 
 .trust-strip {
-  margin: 8px 0 48px;
+  margin: 0 0 48px;
 }
 
 .trust-strip-inner {
-  padding: 8px 0 0;
+  background: #f3f3f3;
+  border-radius: var(--border-radius-lg);
+  padding: 32px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -1677,6 +1679,144 @@ button {
   margin: 32px auto 80px;
 }
 
+.admin-tabs {
+  display: flex;
+  gap: 24px;
+  border-bottom: 2px solid #eee;
+  margin-bottom: 28px;
+}
+
+.admin-tab {
+  padding: 10px 2px;
+  margin-bottom: -2px;
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-weight: 700;
+  font-size: 0.95rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  transition: color 0.2s ease, border-color 0.2s ease;
+}
+
+.admin-tab:hover {
+  color: var(--text);
+}
+
+.admin-tab.active {
+  color: var(--text);
+  border-bottom-color: var(--orange);
+}
+
+.disposizione-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip-tab {
+  padding: 8px 16px;
+  border-radius: var(--border-radius-pill);
+  border: 2px solid #e0e0e0;
+  background: #ffffff;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.78rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.chip-tab:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.chip-tab.active {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: #ffffff;
+}
+
+.disposizione-sort {
+  padding: 8px 14px;
+  border-radius: var(--border-radius-pill);
+  border: 2px solid #e0e0e0;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.78rem;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.disposizione-hint {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.order-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.order-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  border: 2px solid #eee;
+  border-radius: var(--border-radius-md);
+  padding: 10px 14px;
+  background: #ffffff;
+  cursor: grab;
+  transition: border-color 0.2s ease, opacity 0.2s ease;
+}
+
+.order-item:hover {
+  border-color: var(--orange);
+}
+
+.order-item.dragging {
+  opacity: 0.35;
+}
+
+.order-item .order-num {
+  width: 22px;
+  flex-shrink: 0;
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.8rem;
+  color: var(--orange);
+}
+
+.order-item .drag-handle {
+  flex-shrink: 0;
+  color: var(--text-muted);
+}
+
+.order-item img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  background: #f6f6f6;
+  border-radius: 8px;
+  flex-shrink: 0;
+}
+
+.order-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.85rem;
+}
+
+.order-tags {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+
 .admin-toolbar {
   display: flex;
   align-items: center;
@@ -1818,6 +1958,7 @@ button {
 }
 
 .admin-form input,
+.admin-form select,
 .admin-form textarea {
   padding: 12px 14px;
   border-radius: 12px;
@@ -1825,10 +1966,12 @@ button {
   font-family: inherit;
   font-size: 0.95rem;
   color: var(--text);
+  background: #ffffff;
   resize: vertical;
 }
 
 .admin-form input:focus,
+.admin-form select:focus,
 .admin-form textarea:focus {
   outline: none;
   border-color: var(--orange);

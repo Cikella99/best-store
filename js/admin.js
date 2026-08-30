@@ -13,6 +13,9 @@ function adminImgSrc(path) {
   return `../${path}`;
 }
 
+const CATEGORY_LABELS = { shoes: "Scarpe", clothing: "Abbigliamento", accessories: "Accessori" };
+const GENDER_LABELS = { men: "Uomo", woman: "Donna", unisex: "Unisex" };
+
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.getElementById("admin-table-body");
   const emptyState = document.getElementById("admin-empty");
@@ -24,6 +27,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const idField = document.getElementById("product-id");
   const brandField = document.getElementById("product-brand");
   const modelField = document.getElementById("product-model");
+  const categoryField = document.getElementById("product-category");
+  const genderField = document.getElementById("product-gender");
   const priceField = document.getElementById("product-price");
   const oldPriceField = document.getElementById("product-oldprice");
   const descField = document.getElementById("product-desc");
@@ -33,6 +38,20 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let products = getProducts();
   let currentImage = "";
+
+  /* ---------- Tabs ---------- */
+
+  document.querySelectorAll(".admin-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      document.querySelectorAll(".admin-panel").forEach((p) => (p.hidden = true));
+      document.getElementById(tab.dataset.panel).hidden = false;
+      if (tab.dataset.panel === "panel-disposizione") renderOrderList();
+    });
+  });
+
+  /* ---------- Product table ---------- */
 
   function render() {
     countEl.textContent = products.length;
@@ -46,6 +65,7 @@ document.addEventListener("DOMContentLoaded", () => {
             <td><img class="admin-thumb" src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}"></td>
             <td>${p.model}</td>
             <td>${p.brand}</td>
+            <td>${CATEGORY_LABELS[p.category] || "&mdash;"}</td>
             <td>€${p.price}${p.oldPrice ? ` <span class="price-old">€${p.oldPrice}</span>` : ""}</td>
             <td>${discount ? `-${discount}%` : "&mdash;"}</td>
             <td class="admin-row-actions">
@@ -68,6 +88,8 @@ document.addEventListener("DOMContentLoaded", () => {
       idField.value = product.id;
       brandField.value = product.brand;
       modelField.value = product.model;
+      categoryField.value = product.category || "shoes";
+      genderField.value = product.gender || "unisex";
       priceField.value = product.price;
       oldPriceField.value = product.oldPrice || "";
       descField.value = product.desc || "";
@@ -78,6 +100,8 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       modalTitle.textContent = "Aggiungi prodotto";
       idField.value = "";
+      categoryField.value = "shoes";
+      genderField.value = "unisex";
     }
 
     modalBackdrop.hidden = false;
@@ -139,6 +163,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const data = {
       brand: brandField.value.trim(),
       model: modelField.value.trim(),
+      category: categoryField.value,
+      gender: genderField.value,
       price: Number(priceField.value),
       desc: descField.value.trim(),
       image: currentImage || "images/logo.jpeg"
@@ -150,7 +176,10 @@ document.addEventListener("DOMContentLoaded", () => {
     if (id) {
       products = products.map((p) => (p.id === id ? { ...p, ...data } : p));
     } else {
+      const maxOrder = products.reduce((max, p) => Math.max(max, p.order ?? 0), -1);
       data.id = Date.now().toString(36);
+      data.order = maxOrder + 1;
+      data.createdAt = new Date().toISOString();
       products = [...products, data];
     }
 
@@ -160,4 +189,140 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   render();
+
+  /* ---------- Disposizione (drag & drop ordering) ---------- */
+
+  const orderList = document.getElementById("order-list");
+  const disposizioneEmpty = document.getElementById("disposizione-empty");
+  const sortSelect = document.getElementById("disposizione-sort");
+  let activeFilter = "all";
+
+  document.querySelectorAll(".chip-tab").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip-tab").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeFilter = chip.dataset.filter;
+      renderOrderList();
+    });
+  });
+
+  function matchesFilter(p) {
+    if (activeFilter === "all") return true;
+    const [key, value] = activeFilter.split(":");
+    if (key === "cat") return p.category === value;
+    if (key === "gender") return p.gender === value || p.gender === "unisex";
+    return true;
+  }
+
+  function getFilteredSorted() {
+    const filtered = products.filter(matchesFilter);
+    const sortMode = sortSelect.value;
+    if (sortMode === "recent") {
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    } else if (sortMode === "oldest") {
+      filtered.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+    } else {
+      filtered.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+    return filtered;
+  }
+
+  function renderOrderList() {
+    const filtered = getFilteredSorted();
+    disposizioneEmpty.hidden = filtered.length > 0;
+
+    orderList.innerHTML = filtered
+      .map(
+        (p, i) => `
+        <div class="order-item" draggable="true" data-id="${p.id}">
+          <span class="order-num">${i + 1}</span>
+          <svg class="drag-handle" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+            <circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/>
+            <circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/>
+            <circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>
+          </svg>
+          <img src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}">
+          <div class="order-info">
+            <strong>${p.brand} ${p.model}</strong>
+            <span class="order-tags">${CATEGORY_LABELS[p.category] || ""} &middot; ${GENDER_LABELS[p.gender] || ""}</span>
+          </div>
+        </div>`
+      )
+      .join("");
+
+    attachDragHandlers();
+  }
+
+  function attachDragHandlers() {
+    const items = orderList.querySelectorAll(".order-item");
+
+    items.forEach((item) => {
+      item.addEventListener("dragstart", () => {
+        item.classList.add("dragging");
+      });
+      item.addEventListener("dragend", () => {
+        item.classList.remove("dragging");
+        persistCurrentOrder();
+      });
+    });
+
+    orderList.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const dragging = orderList.querySelector(".dragging");
+      if (!dragging) return;
+      const after = getDragAfterElement(orderList, e.clientY);
+      if (after == null) {
+        orderList.appendChild(dragging);
+      } else {
+        orderList.insertBefore(dragging, after);
+      }
+    });
+  }
+
+  function getDragAfterElement(container, y) {
+    const els = [...container.querySelectorAll(".order-item:not(.dragging)")];
+    return els.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child };
+        }
+        return closest;
+      },
+      { offset: Number.NEGATIVE_INFINITY, element: null }
+    ).element;
+  }
+
+  function persistCurrentOrder() {
+    const filtered = getFilteredSorted();
+    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
+    const newIdSequence = [...orderList.querySelectorAll(".order-item")].map((el) => el.dataset.id);
+
+    newIdSequence.forEach((id, i) => {
+      const product = products.find((p) => p.id === id);
+      if (product) product.order = originalOrders[i];
+    });
+
+    saveProducts(products);
+    renderOrderList();
+  }
+
+  sortSelect.addEventListener("change", () => {
+    if (sortSelect.value === "current") {
+      renderOrderList();
+      return;
+    }
+    // Applying a sort re-arranges the filtered set and saves it as the new order.
+    const filtered = getFilteredSorted();
+    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
+    filtered.forEach((p, i) => {
+      p.order = originalOrders[i];
+    });
+    saveProducts(products);
+    sortSelect.value = "current";
+    renderOrderList();
+  });
+
+  renderOrderList();
 });

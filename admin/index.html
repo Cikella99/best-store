@@ -23,32 +23,65 @@
   </header>
 
   <main class="admin-main container">
-    <div class="admin-toolbar">
-      <p class="admin-count"><strong id="product-count">0</strong> prodotti nel catalogo</p>
-      <div class="admin-toolbar-actions">
-        <button type="button" class="link-btn" id="reset-catalog-btn">Ripristina catalogo originale</button>
-        <button type="button" class="btn btn-primary" id="add-product-btn">+ Aggiungi prodotto</button>
-      </div>
+    <div class="admin-tabs">
+      <button type="button" class="admin-tab active" data-panel="panel-products">Prodotti</button>
+      <button type="button" class="admin-tab" data-panel="panel-disposizione">Disposizione</button>
     </div>
 
-    <div class="admin-table-wrap">
-      <table class="admin-table">
-        <thead>
-          <tr>
-            <th></th>
-            <th>Modello</th>
-            <th>Brand</th>
-            <th>Prezzo</th>
-            <th>Sconto</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="admin-table-body"></tbody>
-      </table>
-      <div id="admin-empty" class="cart-empty" hidden>
-        <p>Nessun prodotto nel catalogo.</p>
+    <section class="admin-panel" id="panel-products">
+      <div class="admin-toolbar">
+        <p class="admin-count"><strong id="product-count">0</strong> prodotti nel catalogo</p>
+        <div class="admin-toolbar-actions">
+          <button type="button" class="link-btn" id="reset-catalog-btn">Ripristina catalogo originale</button>
+          <button type="button" class="btn btn-primary" id="add-product-btn">+ Aggiungi prodotto</button>
+        </div>
       </div>
-    </div>
+
+      <div class="admin-table-wrap">
+        <table class="admin-table">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Modello</th>
+              <th>Brand</th>
+              <th>Categoria</th>
+              <th>Prezzo</th>
+              <th>Sconto</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body"></tbody>
+        </table>
+        <div id="admin-empty" class="cart-empty" hidden>
+          <p>Nessun prodotto nel catalogo.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="admin-panel" id="panel-disposizione" hidden>
+      <div class="admin-toolbar">
+        <div class="disposizione-tabs">
+          <button type="button" class="chip-tab active" data-filter="all">Tutti i prodotti</button>
+          <button type="button" class="chip-tab" data-filter="cat:shoes">Shoes</button>
+          <button type="button" class="chip-tab" data-filter="cat:clothing">Clothing</button>
+          <button type="button" class="chip-tab" data-filter="cat:accessories">Accessories</button>
+          <button type="button" class="chip-tab" data-filter="gender:men">Uomo</button>
+          <button type="button" class="chip-tab" data-filter="gender:woman">Donna</button>
+        </div>
+        <select id="disposizione-sort" class="disposizione-sort">
+          <option value="current">Ordine attuale</option>
+          <option value="recent">Più recenti</option>
+          <option value="oldest">Più vecchi</option>
+        </select>
+      </div>
+
+      <p class="disposizione-hint">Trascina i blocchi per cambiare l'ordine con cui i prodotti compaiono sul sito, in questa sezione.</p>
+
+      <div class="order-list" id="order-list"></div>
+      <div id="disposizione-empty" class="cart-empty" hidden>
+        <p>Nessun prodotto in questa sezione.</p>
+      </div>
+    </section>
   </main>
 
   <div class="admin-modal-backdrop" id="admin-modal-backdrop" hidden>
@@ -79,6 +112,23 @@
         <label>Modello
           <input type="text" id="product-model" required placeholder="Es. Zoom Vomero 5">
         </label>
+
+        <div class="admin-form-row">
+          <label>Categoria
+            <select id="product-category" required>
+              <option value="shoes">Scarpe</option>
+              <option value="clothing">Abbigliamento</option>
+              <option value="accessories">Accessori</option>
+            </select>
+          </label>
+          <label>Genere
+            <select id="product-gender" required>
+              <option value="unisex">Unisex</option>
+              <option value="men">Uomo</option>
+              <option value="woman">Donna</option>
+            </select>
+          </label>
+        </div>
 
         <div class="admin-form-row">
           <label>Prezzo (€)

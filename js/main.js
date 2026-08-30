@@ -134,7 +134,7 @@ function productCardHTML(p) {
 function renderPopularGrid() {
   const grid = document.getElementById("popular-grid");
   if (!grid) return;
-  grid.innerHTML = getProducts().map(productCardHTML).join("");
+  grid.innerHTML = getOrderedProducts().map(productCardHTML).join("");
 }
 
 function renderProductDetail() {
@@ -364,15 +364,18 @@ function initCatalogPage() {
 
   function renderGrid() {
     let items = products.filter((p) => {
+      const categoryOk = !typeParam || p.category === typeParam;
+      const genderOk = !(cat === "men" || cat === "woman") || p.gender === cat || p.gender === "unisex";
       const brandOk = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
       const priceOk = p.price >= priceLow && p.price <= priceHigh;
-      return brandOk && priceOk;
+      return categoryOk && genderOk && brandOk && priceOk;
     });
+    if (currentSort === "default") items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     if (currentSort === "price-asc") items.sort((a, b) => a.price - b.price);
     if (currentSort === "price-desc") items.sort((a, b) => b.price - a.price);
     grid.innerHTML = items.length
       ? items.map(productCardHTML).join("")
-      : '<p class="empty-state">Nessun prodotto trovato.</p>';
+      : '<p class="empty-state">Nessun prodotto trovato in questa sezione.</p>';
   }
 
   const brandBtn = document.querySelector('[data-key="brand"] .filter-btn');
