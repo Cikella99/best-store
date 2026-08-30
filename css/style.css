@@ -347,7 +347,7 @@ button {
   border: 3px solid var(--orange);
   border-radius: var(--border-radius-lg);
   overflow: hidden;
-  min-height: 360px;
+  min-height: 480px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -358,22 +358,32 @@ button {
 
 .hero-inner h1 {
   color: #ffffff;
-  font-size: clamp(1.4rem, 3vw, 2.2rem);
+  font-size: clamp(1rem, 1.9vw, 1.6rem);
   font-weight: 700;
   text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-  max-width: 640px;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .hero-inner h1 {
+    white-space: normal;
+    max-width: 480px;
+  }
 }
 
 /* Trust strip */
 
 .trust-strip {
+  margin-bottom: 48px;
+}
+
+.trust-strip-inner {
   background: #f3f3f3;
   border-radius: var(--border-radius-lg);
   padding: 32px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
-  margin-bottom: 48px;
 }
 
 .trust-item {
@@ -381,24 +391,13 @@ button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 12px;
-}
-
-.trust-icon {
-  width: 64px;
-  height: 64px;
-  flex-shrink: 0;
-  border-radius: 50%;
-  background: var(--orange);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 10px;
 }
 
 .trust-item svg {
-  width: 30px;
-  height: 30px;
-  color: #ffffff;
+  width: 22px;
+  height: 22px;
+  color: var(--orange);
 }
 
 .trust-item span {
@@ -577,10 +576,13 @@ button {
 /* Reviews */
 
 .reviews {
+  margin-bottom: 56px;
+}
+
+.reviews-inner {
   background: #f3f3f3;
   border-radius: var(--border-radius-lg);
   padding: 40px;
-  margin-bottom: 56px;
 }
 
 .reviews-header {
@@ -663,7 +665,7 @@ button {
   .reviews-grid {
     grid-template-columns: 1fr;
   }
-  .trust-strip {
+  .trust-strip-inner {
     grid-template-columns: repeat(2, 1fr);
   }
 }
