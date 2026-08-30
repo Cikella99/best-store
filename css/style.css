@@ -207,13 +207,15 @@ button {
   border-radius: var(--border-radius-md);
   overflow: hidden;
   min-height: 140px;
+  border: 2px solid transparent;
   background: url("../images/hero image.webp") center / cover no-repeat;
   padding: 16px;
-  transition: transform 0.2s ease;
+  transition: transform 0.2s ease, border-color 0.2s ease;
 }
 
 .mega-banner:hover {
   transform: scale(1.02);
+  border-color: var(--orange);
 }
 
 .mega-banner::after {
@@ -1012,6 +1014,62 @@ button {
   height: 6px;
   border-radius: 50%;
   background: #ffffff;
+}
+
+.color-panel {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 10px;
+  min-width: 200px;
+  padding: 14px;
+}
+
+.color-swatch {
+  position: relative;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid #e6e6e6;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.15s ease, border-color 0.15s ease;
+}
+
+.color-swatch:hover {
+  transform: scale(1.08);
+}
+
+.color-swatch input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.color-swatch:has(input:checked) {
+  border-color: var(--orange);
+  box-shadow: 0 0 0 2px rgba(242, 84, 29, 0.25);
+}
+
+.color-swatch.beige {
+  background: linear-gradient(135deg, #efe2c9, #c8ad82);
+}
+
+.color-swatch.red-pink {
+  background: linear-gradient(135deg, #ff7a7a, #ffbdd2);
+}
+
+.color-swatch.green {
+  background: linear-gradient(135deg, #c3edA6, #74b26a);
+}
+
+.color-swatch.black-grey {
+  background: linear-gradient(135deg, #2b2b2b, #8a8a8a);
+}
+
+.color-swatch.white-grey {
+  background: linear-gradient(135deg, #ffffff, #c6c6c6);
 }
 
 .price-panel {

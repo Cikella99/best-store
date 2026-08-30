@@ -294,8 +294,10 @@ function initCatalogPage() {
 
   const params = new URLSearchParams(window.location.search);
   const cat = params.get("cat");
-  const titles = { men: "Uomo", woman: "Donna", sales: "Saldi" };
-  const pageTitle = titles[cat] || "Shop";
+  const typeParam = params.get("type");
+  const catTitles = { men: "Uomo", woman: "Donna", sales: "Saldi" };
+  const typeTitles = { shoes: "Scarpe", clothing: "Abbigliamento", accessories: "Accessori" };
+  const pageTitle = catTitles[cat] || typeTitles[typeParam] || "Shop";
   document.title = `${pageTitle} — Best Store`;
 
   const heroSection = document.getElementById("catalog-hero");
@@ -309,15 +311,17 @@ function initCatalogPage() {
     heroInner.classList.add(cat === "men" ? "tint-blue" : "tint-pink");
     heroTitle.textContent = pageTitle;
     header.hidden = true;
+  } else if (typeTitles[typeParam]) {
+    heroSection.hidden = false;
+    heroTitle.textContent = pageTitle;
+    header.hidden = true;
   } else {
     plainTitle.textContent = pageTitle;
   }
 
-  const typeParam = params.get("type");
   const categoriaFilter = document.getElementById("filter-categoria");
-  if (typeParam && categoriaFilter) {
-    categoriaFilter.hidden = true;
-  }
+  const showCategoria = !typeParam && (!cat || cat === "men" || cat === "woman");
+  categoriaFilter.hidden = !showCategoria;
 
   const products = getProducts();
   const brands = [...new Set(products.map((p) => p.brand))];
