@@ -17,8 +17,8 @@
         <img src="images/logo.jpeg" alt="Best Store">
       </a>
       <nav class="main-nav">
-        <a href="index.html" class="active">menu</a>
-        <a href="catalogo.html">shop</a>
+        <a href="index.html">menu</a>
+        <a href="catalogo.html" class="active">shop</a>
 
         <div class="nav-item">
           <a href="catalogo.html?cat=men">men</a>
@@ -81,30 +81,51 @@
   </header>
 
   <main>
-    <section class="hero container">
-      <div class="hero-inner">
-        <h1>Welcome on board, welcome on Best Store.</h1>
+    <section class="breadcrumb container">
+      <a href="index.html">Home</a> / <a href="catalogo.html">Shop</a> / <span id="detail-model-crumb">Prodotto</span>
+    </section>
+
+    <section class="product-detail container" id="product-detail">
+      <div class="product-detail-image">
+        <span class="badge" id="detail-badge">On sale</span>
+        <img id="detail-image" src="" alt="">
+      </div>
+
+      <div class="product-detail-info">
+        <span class="tag" id="detail-brand"></span>
+        <h1 id="detail-model"></h1>
+        <p class="price price-lg" id="detail-price"></p>
+        <p class="detail-desc" id="detail-desc"></p>
+
+        <div class="size-block">
+          <span class="size-label">Taglia (EU)</span>
+          <div class="size-list">
+            <button type="button" class="size-pill">39</button>
+            <button type="button" class="size-pill">40</button>
+            <button type="button" class="size-pill">41</button>
+            <button type="button" class="size-pill">42</button>
+            <button type="button" class="size-pill">43</button>
+            <button type="button" class="size-pill">44</button>
+            <button type="button" class="size-pill">45</button>
+          </div>
+        </div>
+
+        <div class="detail-actions">
+          <div class="qty-stepper">
+            <button type="button" aria-label="Diminuisci">-</button>
+            <span>1</span>
+            <button type="button" aria-label="Aumenta">+</button>
+          </div>
+          <button type="button" class="btn btn-primary btn-large">Aggiungi al carrello</button>
+        </div>
       </div>
     </section>
 
-    <section class="products container">
+    <section class="products container related">
       <div class="products-header">
-        <h2 class="section-title">I più popolari</h2>
+        <h2 class="section-title">Potrebbero piacerti anche</h2>
       </div>
-
-      <div class="products-grid" id="popular-grid"></div>
-
-      <div class="products-footer">
-        <a href="catalogo.html" class="see-all">Vedi tutti</a>
-      </div>
-    </section>
-
-    <section class="newsletter container">
-      <h2>you may need fresh air, stay updated.</h2>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Your e-mail" required>
-        <button type="submit" class="btn btn-primary">Send</button>
-      </form>
+      <div class="products-grid" id="related-grid"></div>
     </section>
   </main>
 
