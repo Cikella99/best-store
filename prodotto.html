@@ -82,6 +82,7 @@
         <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
           <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.1 15.9 4.5 17 5.4 17H17M17 17C15.9 17 15 17.9 15 19C15 20.1 15.9 21 17 21C18.1 21 19 20.1 19 19C19 17.9 18.1 17 17 17ZM9 19C9 20.1 8.1 21 7 21C5.9 21 5 20.1 5 19C5 17.9 5.9 17 7 17C8.1 17 9 17.9 9 19Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
         </svg>
+        <span class="cart-count" id="cart-count" hidden>0</span>
       </a>
     </div>
   </header>
@@ -118,11 +119,11 @@
 
         <div class="detail-actions">
           <div class="qty-stepper">
-            <button type="button" aria-label="Diminuisci">-</button>
-            <span>1</span>
-            <button type="button" aria-label="Aumenta">+</button>
+            <button type="button" id="detail-qty-minus" aria-label="Diminuisci">-</button>
+            <span id="detail-qty-value">1</span>
+            <button type="button" id="detail-qty-plus" aria-label="Aumenta">+</button>
           </div>
-          <button type="button" class="btn btn-primary btn-large">Aggiungi al carrello</button>
+          <button type="button" id="add-to-cart-btn" class="btn btn-primary btn-large">Aggiungi al carrello</button>
         </div>
       </div>
     </section>

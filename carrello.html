@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Best Store</title>
+  <title>Carrello — Best Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -17,7 +17,7 @@
         <img src="images/logo.jpeg" alt="Best Store">
       </a>
       <nav class="main-nav">
-        <a href="index.html" class="active">menu</a>
+        <a href="index.html">menu</a>
         <a href="catalogo.html">shop</a>
 
         <div class="nav-item">
@@ -88,30 +88,9 @@
   </header>
 
   <main>
-    <section class="hero container">
-      <div class="hero-inner">
-        <h1>Welcome on board, welcome on Best Store.</h1>
-      </div>
-    </section>
-
-    <section class="products container">
-      <div class="products-header">
-        <h2 class="section-title">I più popolari</h2>
-      </div>
-
-      <div class="products-grid" id="popular-grid"></div>
-
-      <div class="products-footer">
-        <a href="catalogo.html" class="see-all">Vedi tutti</a>
-      </div>
-    </section>
-
-    <section class="newsletter container">
-      <h2>you may need fresh air, stay updated.</h2>
-      <form class="newsletter-form">
-        <input type="email" placeholder="Your e-mail" required>
-        <button type="submit" class="btn btn-primary">Send</button>
-      </form>
+    <section class="cart-page container">
+      <h1 class="catalog-title">Il tuo carrello</h1>
+      <div id="cart-content"></div>
     </section>
   </main>
 
