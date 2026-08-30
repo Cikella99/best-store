@@ -23,87 +23,73 @@
   </header>
 
   <main class="admin-main container">
-    <div class="admin-tabs">
-      <button type="button" class="admin-tab active" data-panel="panel-products">Prodotti</button>
-      <button type="button" class="admin-tab" data-panel="panel-disposizione">Disposizione</button>
+    <div class="admin-toolbar">
+      <p class="admin-count"><strong id="product-count">0</strong> prodotti nel catalogo</p>
+      <div class="admin-toolbar-actions">
+        <input type="search" id="product-search" class="admin-search" placeholder="Cerca per brand o modello...">
+        <div class="view-toggle">
+          <button type="button" class="view-btn" data-view="table" aria-label="Vista elenco">
+            <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+          </button>
+          <button type="button" class="view-btn active" data-view="grid" aria-label="Vista blocchi">
+            <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+          </button>
+        </div>
+        <button type="button" class="btn btn-primary" id="add-product-btn">+ Aggiungi prodotto</button>
+      </div>
     </div>
 
-    <section class="admin-panel" id="panel-products">
-      <div class="admin-toolbar">
-        <p class="admin-count"><strong id="product-count">0</strong> prodotti nel catalogo</p>
-        <div class="admin-toolbar-actions">
-          <input type="search" id="product-search" class="admin-search" placeholder="Cerca per brand o modello...">
-          <div class="view-toggle">
-            <button type="button" class="view-btn active" data-view="table" aria-label="Vista elenco">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            </button>
-            <button type="button" class="view-btn" data-view="grid" aria-label="Vista blocchi">
-              <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
-            </button>
-          </div>
-          <button type="button" class="link-btn" id="reset-catalog-btn">Ripristina catalogo originale</button>
-          <button type="button" class="btn btn-primary" id="add-product-btn">+ Aggiungi prodotto</button>
-        </div>
+    <div class="admin-toolbar admin-toolbar-filters">
+      <div class="disposizione-tabs" id="filter-chips-row">
+        <button type="button" class="chip-tab active" data-filter="all">Tutti i prodotti</button>
+        <button type="button" class="chip-tab" data-filter="cat:shoes">Shoes</button>
+        <button type="button" class="chip-tab" data-filter="cat:clothing">Clothing</button>
+        <button type="button" class="chip-tab" data-filter="cat:accessories">Accessories</button>
+        <button type="button" class="chip-tab" data-filter="sale">Sales</button>
+        <button type="button" class="chip-tab" data-filter="gender:men">Uomo</button>
+        <button type="button" class="chip-tab" data-filter="gender:woman">Donna</button>
+        <button type="button" class="chip-tab" data-filter="sub:tshirts">T-shirts</button>
+        <button type="button" class="chip-tab" data-filter="sub:pants">Pants</button>
+        <button type="button" class="chip-tab" data-filter="sub:felpe">Felpe</button>
+        <button type="button" class="chip-tab" data-filter="sub:giacche">Giacche</button>
+        <button type="button" class="chip-tab" data-filter="sub:cappelli">Cappelli</button>
+        <button type="button" class="chip-tab" data-filter="sub:calzini">Calzini</button>
+        <button type="button" class="chip-tab" data-filter="sub:borse">Borse</button>
       </div>
+      <select id="disposizione-sort" class="disposizione-sort">
+        <option value="current">In evidenza</option>
+        <option value="recent">Più recenti</option>
+        <option value="oldest">Più vecchi</option>
+      </select>
+    </div>
 
-      <div class="admin-table-wrap" id="view-table">
-        <table class="admin-table">
-          <thead>
-            <tr>
-              <th></th>
-              <th>Modello</th>
-              <th>Brand</th>
-              <th>Categoria</th>
-              <th>Prezzo</th>
-              <th>Sconto</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody id="admin-table-body"></tbody>
-        </table>
-      </div>
+    <p class="disposizione-hint">Trascina i blocchi (o le righe) per cambiare l'ordine con cui i prodotti compaiono sul sito. Clicca un prodotto per vederne o modificarne tutti i dettagli.</p>
 
-      <div class="admin-products-grid" id="view-grid" hidden></div>
+    <div class="admin-table-wrap" id="view-table" hidden>
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>#</th>
+            <th></th>
+            <th>Modello</th>
+            <th>Brand</th>
+            <th>Categoria</th>
+            <th>Unità</th>
+            <th>Prezzo</th>
+            <th>Sconto</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+    </div>
 
-      <div id="admin-empty" class="cart-empty" hidden>
-        <p>Nessun prodotto trovato.</p>
-      </div>
-    </section>
+    <div class="order-list grid-view" id="order-list"></div>
 
-    <section class="admin-panel" id="panel-disposizione" hidden>
-      <div class="admin-toolbar">
-        <div class="disposizione-tabs">
-          <button type="button" class="chip-tab active" data-filter="all">Tutti i prodotti</button>
-          <button type="button" class="chip-tab" data-filter="cat:shoes">Shoes</button>
-          <button type="button" class="chip-tab" data-filter="cat:clothing">Clothing</button>
-          <button type="button" class="chip-tab" data-filter="cat:accessories">Accessories</button>
-          <button type="button" class="chip-tab" data-filter="gender:men">Uomo</button>
-          <button type="button" class="chip-tab" data-filter="gender:woman">Donna</button>
-        </div>
-        <div class="disposizione-toolbar-right">
-          <select id="disposizione-sort" class="disposizione-sort">
-            <option value="current">Ordine attuale</option>
-            <option value="recent">Più recenti</option>
-            <option value="oldest">Più vecchi</option>
-          </select>
-          <div class="view-toggle">
-            <button type="button" class="view-btn" data-disp-view="list" aria-label="Vista elenco">
-              <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
-            </button>
-            <button type="button" class="view-btn active" data-disp-view="grid" aria-label="Vista blocchi">
-              <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <p class="disposizione-hint">Trascina i blocchi per cambiare l'ordine con cui i prodotti compaiono sul sito, in questa sezione.</p>
-
-      <div class="order-list grid-view" id="order-list"></div>
-      <div id="disposizione-empty" class="cart-empty" hidden>
-        <p>Nessun prodotto in questa sezione.</p>
-      </div>
-    </section>
+    <div id="admin-empty" class="cart-empty" hidden>
+      <p>Nessun prodotto trovato.</p>
+    </div>
   </main>
 
   <div class="admin-modal-backdrop" id="admin-modal-backdrop" hidden>

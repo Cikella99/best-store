@@ -120,7 +120,3 @@ function getOrderedProducts() {
 function saveProducts(list) {
   localStorage.setItem(ADMIN_PRODUCTS_KEY, JSON.stringify(list));
 }
-
-function resetProducts() {
-  localStorage.removeItem(ADMIN_PRODUCTS_KEY);
-}

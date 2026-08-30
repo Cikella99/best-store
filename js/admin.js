@@ -13,6 +13,11 @@ function adminImgSrc(path) {
   return `../${path}`;
 }
 
+function totalUnits(p) {
+  if (!p.sizes) return null;
+  return Object.values(p.sizes).reduce((sum, n) => sum + (Number(n) || 0), 0);
+}
+
 const CATEGORY_LABELS = { shoes: "Scarpe", clothing: "Abbigliamento", accessories: "Accessori" };
 const GENDER_LABELS = { men: "Uomo", woman: "Donna", unisex: "Unisex" };
 const SIZE_LIST = ["39", "40", "41", "42", "43", "44", "45"];
@@ -32,12 +37,13 @@ const SUBCATEGORY_OPTIONS = {
 };
 
 document.addEventListener("DOMContentLoaded", () => {
-  const tableBody = document.getElementById("admin-table-body");
   const viewTable = document.getElementById("view-table");
-  const viewGrid = document.getElementById("view-grid");
+  const tableBody = document.getElementById("admin-table-body");
+  const orderList = document.getElementById("order-list");
   const emptyState = document.getElementById("admin-empty");
   const countEl = document.getElementById("product-count");
   const searchInput = document.getElementById("product-search");
+  const sortSelect = document.getElementById("disposizione-sort");
 
   const modalBackdrop = document.getElementById("admin-modal-backdrop");
   const modalTitle = document.getElementById("admin-modal-title");
@@ -62,19 +68,8 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let products = getProducts();
   let currentImage = "";
-  let currentView = "table";
-
-  /* ---------- Tabs ---------- */
-
-  document.querySelectorAll(".admin-tab").forEach((tab) => {
-    tab.addEventListener("click", () => {
-      document.querySelectorAll(".admin-tab").forEach((t) => t.classList.remove("active"));
-      tab.classList.add("active");
-      document.querySelectorAll(".admin-panel").forEach((p) => (p.hidden = true));
-      document.getElementById(tab.dataset.panel).hidden = false;
-      if (tab.dataset.panel === "panel-disposizione") renderOrderList();
-    });
-  });
+  let currentView = "grid";
+  let activeFilter = "all";
 
   /* ---------- View toggle ---------- */
 
@@ -83,64 +78,130 @@ document.addEventListener("DOMContentLoaded", () => {
       document.querySelectorAll(".view-btn").forEach((b) => b.classList.remove("active"));
       btn.classList.add("active");
       currentView = btn.dataset.view;
-      viewTable.hidden = currentView !== "table";
-      viewGrid.hidden = currentView !== "grid";
+      render();
+    });
+  });
+
+  /* ---------- Filters: chips + search + sort ---------- */
+
+  document.querySelectorAll(".chip-tab").forEach((chip) => {
+    chip.addEventListener("click", () => {
+      document.querySelectorAll(".chip-tab").forEach((c) => c.classList.remove("active"));
+      chip.classList.add("active");
+      activeFilter = chip.dataset.filter;
       render();
     });
   });
 
   searchInput.addEventListener("input", render);
+  sortSelect.addEventListener("change", () => {
+    if (sortSelect.value === "current") {
+      render();
+      return;
+    }
+    // Applying a sort re-arranges the current filtered set and saves it as the new order.
+    const filtered = getFilteredSorted();
+    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
+    filtered.forEach((p, i) => {
+      p.order = originalOrders[i];
+    });
+    saveProducts(products);
+    sortSelect.value = "current";
+    render();
+  });
 
-  /* ---------- Product list (table + grid) ---------- */
-
-  function getFilteredProducts() {
-    const term = searchInput.value.trim().toLowerCase();
-    if (!term) return products;
-    return products.filter((p) => `${p.brand} ${p.model}`.toLowerCase().includes(term));
+  function matchesFilter(p) {
+    if (activeFilter === "all") return true;
+    if (activeFilter === "sale") return !!p.oldPrice;
+    const [key, value] = activeFilter.split(":");
+    if (key === "cat") return p.category === value;
+    if (key === "gender") return p.gender === value || p.gender === "unisex";
+    if (key === "sub") return p.subcategory === value;
+    return true;
   }
 
-  function productRowHTML(p) {
+  function matchesSearch(p) {
+    const term = searchInput.value.trim().toLowerCase();
+    if (!term) return true;
+    return `${p.brand} ${p.model}`.toLowerCase().includes(term);
+  }
+
+  function getFilteredSorted() {
+    const filtered = products.filter((p) => matchesFilter(p) && matchesSearch(p));
+    const sortMode = sortSelect.value;
+    if (sortMode === "recent") {
+      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    } else if (sortMode === "oldest") {
+      filtered.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
+    } else {
+      filtered.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+    }
+    return filtered;
+  }
+
+  /* ---------- Rendering ---------- */
+
+  const dragHandleSVG = `<svg class="drag-handle" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
+    <circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/>
+    <circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/>
+    <circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>
+  </svg>`;
+
+  const deleteIconSVG = `<svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>`;
+
+  function tableRowHTML(p, index) {
     const discount = discountPercentAdmin(p);
+    const units = totalUnits(p);
     return `
-      <tr data-id="${p.id}">
+      <tr draggable="true" data-id="${p.id}">
+        <td class="drag-handle-cell">${dragHandleSVG}</td>
+        <td class="order-num-cell">${index}</td>
         <td><img class="admin-thumb" src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}"></td>
         <td>${p.model}</td>
         <td>${p.brand}</td>
         <td>${CATEGORY_LABELS[p.category] || "&mdash;"}</td>
+        <td>${units === null ? "&mdash;" : units}</td>
         <td>€${p.price}${p.oldPrice ? ` <span class="price-old">€${p.oldPrice}</span>` : ""}</td>
         <td>${discount ? `-${discount}%` : "&mdash;"}</td>
         <td class="admin-row-actions">
-          <button type="button" class="link-btn edit-btn">Modifica</button>
-          <button type="button" class="link-btn delete-btn">Elimina</button>
+          <button type="button" class="cart-item-remove delete-btn" aria-label="Elimina">${deleteIconSVG}</button>
         </td>
       </tr>`;
   }
 
-  function productCardHTMLAdmin(p) {
+  function gridCardHTML(p, index) {
     const discount = discountPercentAdmin(p);
     return `
-      <div class="admin-product-card" data-id="${p.id}">
+      <div class="order-item" draggable="true" data-id="${p.id}">
+        ${dragHandleSVG}
+        <button type="button" class="cart-item-remove delete-btn" aria-label="Elimina">${deleteIconSVG}</button>
         <img src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}">
-        <span class="apc-brand">${p.brand}</span>
-        <span class="apc-title">${p.model}</span>
-        <span class="apc-meta">${CATEGORY_LABELS[p.category] || ""}</span>
-        <span class="apc-price">€${p.price}${discount ? ` <span class="price-old">€${p.oldPrice}</span> -${discount}%` : ""}</span>
-        <div class="apc-actions">
-          <button type="button" class="link-btn edit-btn">Modifica</button>
-          <button type="button" class="link-btn delete-btn">Elimina</button>
+        <div class="order-info">
+          <span class="order-tags">#${index} &middot; ${CATEGORY_LABELS[p.category] || ""} &middot; ${GENDER_LABELS[p.gender] || ""}</span>
+          <span class="apc-brand">${p.brand}</span>
+          <strong class="apc-title">${p.model}</strong>
+          <span class="apc-price">€${p.price}${discount ? ` <span class="price-old">€${p.oldPrice}</span> -${discount}%` : ""}</span>
         </div>
       </div>`;
   }
 
   function render() {
-    const filtered = getFilteredProducts();
+    const filtered = getFilteredSorted();
     countEl.textContent = products.length;
     emptyState.hidden = filtered.length > 0;
-
-    tableBody.innerHTML = filtered.map(productRowHTML).join("");
-    viewGrid.innerHTML = filtered.map(productCardHTMLAdmin).join("");
-
     populateBrandDatalist();
+
+    if (currentView === "table") {
+      viewTable.hidden = false;
+      orderList.hidden = true;
+      tableBody.innerHTML = filtered.map((p, i) => tableRowHTML(p, i + 1)).join("");
+      attachRowInteractions(tableBody, "list");
+    } else {
+      viewTable.hidden = true;
+      orderList.hidden = false;
+      orderList.innerHTML = filtered.map((p, i) => gridCardHTML(p, i + 1)).join("");
+      attachRowInteractions(orderList, "grid");
+    }
   }
 
   function populateBrandDatalist() {
@@ -148,7 +209,103 @@ document.addEventListener("DOMContentLoaded", () => {
     brandDatalist.innerHTML = brands.map((b) => `<option value="${b}">`).join("");
   }
 
-  /* ---------- Modal: subcategory, sizes ---------- */
+  /* ---------- Click to open, delete button, drag reorder ---------- */
+
+  function attachRowInteractions(container, mode) {
+    const items = container.querySelectorAll("[data-id]");
+
+    items.forEach((item) => {
+      item.addEventListener("click", (e) => {
+        if (e.target.closest(".delete-btn") || e.target.closest(".drag-handle")) return;
+        const product = products.find((p) => p.id === item.dataset.id);
+        if (product) openModal(product);
+      });
+
+      item.querySelector(".delete-btn")?.addEventListener("click", (e) => {
+        e.stopPropagation();
+        const product = products.find((p) => p.id === item.dataset.id);
+        if (!product) return;
+        if (confirm(`Eliminare "${product.brand} ${product.model}" dal catalogo?`)) {
+          products = products.filter((p) => p.id !== product.id);
+          saveProducts(products);
+          render();
+        }
+      });
+
+      item.addEventListener("dragstart", () => item.classList.add("dragging"));
+      item.addEventListener("dragend", () => {
+        item.classList.remove("dragging");
+        persistCurrentOrder(container);
+      });
+    });
+
+    container.addEventListener("dragover", (e) => {
+      e.preventDefault();
+      const dragging = container.querySelector(".dragging");
+      if (!dragging) return;
+      const after =
+        mode === "grid" ? getDragAfterElementGrid(container, e.clientX, e.clientY) : getDragAfterElement(container, e.clientY);
+      if (after == null) {
+        container.appendChild(dragging);
+      } else {
+        container.insertBefore(dragging, after);
+      }
+    });
+  }
+
+  function getDragAfterElement(container, y) {
+    const els = [...container.querySelectorAll("[data-id]:not(.dragging)")];
+    return els.reduce(
+      (closest, child) => {
+        const box = child.getBoundingClientRect();
+        const offset = y - box.top - box.height / 2;
+        if (offset < 0 && offset > closest.offset) {
+          return { offset, element: child };
+        }
+        return closest;
+      },
+      { offset: Number.NEGATIVE_INFINITY, element: null }
+    ).element;
+  }
+
+  // Grid layout needs a 2D-aware check: find the nearest card to the
+  // pointer, then decide whether to drop before or after it based on
+  // which side of its center the pointer is on.
+  function getDragAfterElementGrid(container, x, y) {
+    const els = [...container.querySelectorAll("[data-id]:not(.dragging)")];
+    let nearest = null;
+    let nearestDist = Number.POSITIVE_INFINITY;
+
+    els.forEach((child) => {
+      const box = child.getBoundingClientRect();
+      const centerX = box.left + box.width / 2;
+      const centerY = box.top + box.height / 2;
+      const dist = (x - centerX) ** 2 + (y - centerY) ** 2;
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearest = { element: child, isAfter: x > centerX };
+      }
+    });
+
+    if (!nearest) return null;
+    return nearest.isAfter ? nearest.element.nextElementSibling : nearest.element;
+  }
+
+  function persistCurrentOrder(container) {
+    const filtered = getFilteredSorted();
+    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
+    const newIdSequence = [...container.querySelectorAll("[data-id]")].map((el) => el.dataset.id);
+
+    newIdSequence.forEach((id, i) => {
+      const product = products.find((p) => p.id === id);
+      if (product) product.order = originalOrders[i];
+    });
+
+    saveProducts(products);
+    render();
+  }
+
+  /* ---------- Modal: add / edit ---------- */
 
   function updateSubcategoryOptions(category, selectedValue) {
     const options = SUBCATEGORY_OPTIONS[category] || [];
@@ -255,34 +412,6 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-  function handleListClick(e) {
-    const item = e.target.closest("[data-id]");
-    if (!item) return;
-    const id = item.dataset.id;
-    const product = products.find((p) => p.id === id);
-
-    if (e.target.closest(".edit-btn")) {
-      openModal(product);
-    } else if (e.target.closest(".delete-btn")) {
-      if (confirm(`Eliminare "${product.brand} ${product.model}" dal catalogo?`)) {
-        products = products.filter((p) => p.id !== id);
-        saveProducts(products);
-        render();
-      }
-    }
-  }
-
-  tableBody.addEventListener("click", handleListClick);
-  viewGrid.addEventListener("click", handleListClick);
-
-  document.getElementById("reset-catalog-btn").addEventListener("click", () => {
-    if (confirm("Ripristinare il catalogo originale? Le modifiche fatte da questo pannello andranno perse.")) {
-      resetProducts();
-      products = getProducts();
-      render();
-    }
-  });
-
   form.addEventListener("submit", (e) => {
     e.preventDefault();
 
@@ -327,176 +456,4 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   render();
-
-  /* ---------- Disposizione (drag & drop ordering) ---------- */
-
-  const orderList = document.getElementById("order-list");
-  const disposizioneEmpty = document.getElementById("disposizione-empty");
-  const sortSelect = document.getElementById("disposizione-sort");
-  let activeFilter = "all";
-  let disposizioneView = "grid";
-
-  document.querySelectorAll("[data-disp-view]").forEach((btn) => {
-    btn.addEventListener("click", () => {
-      document.querySelectorAll("[data-disp-view]").forEach((b) => b.classList.remove("active"));
-      btn.classList.add("active");
-      disposizioneView = btn.dataset.dispView;
-      orderList.classList.toggle("grid-view", disposizioneView === "grid");
-    });
-  });
-
-  document.querySelectorAll(".chip-tab").forEach((chip) => {
-    chip.addEventListener("click", () => {
-      document.querySelectorAll(".chip-tab").forEach((c) => c.classList.remove("active"));
-      chip.classList.add("active");
-      activeFilter = chip.dataset.filter;
-      renderOrderList();
-    });
-  });
-
-  function matchesFilter(p) {
-    if (activeFilter === "all") return true;
-    const [key, value] = activeFilter.split(":");
-    if (key === "cat") return p.category === value;
-    if (key === "gender") return p.gender === value || p.gender === "unisex";
-    return true;
-  }
-
-  function getFilteredSorted() {
-    const filtered = products.filter(matchesFilter);
-    const sortMode = sortSelect.value;
-    if (sortMode === "recent") {
-      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    } else if (sortMode === "oldest") {
-      filtered.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
-    } else {
-      filtered.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    }
-    return filtered;
-  }
-
-  function renderOrderList() {
-    const filtered = getFilteredSorted();
-    disposizioneEmpty.hidden = filtered.length > 0;
-
-    orderList.innerHTML = filtered
-      .map(
-        (p, i) => `
-        <div class="order-item" draggable="true" data-id="${p.id}">
-          <span class="order-num">${i + 1}</span>
-          <svg class="drag-handle" viewBox="0 0 24 24" fill="currentColor" width="16" height="16">
-            <circle cx="9" cy="6" r="1.4"/><circle cx="15" cy="6" r="1.4"/>
-            <circle cx="9" cy="12" r="1.4"/><circle cx="15" cy="12" r="1.4"/>
-            <circle cx="9" cy="18" r="1.4"/><circle cx="15" cy="18" r="1.4"/>
-          </svg>
-          <img src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}">
-          <div class="order-info">
-            <strong>${p.brand} ${p.model}</strong>
-            <span class="order-tags">${CATEGORY_LABELS[p.category] || ""} &middot; ${GENDER_LABELS[p.gender] || ""}</span>
-          </div>
-        </div>`
-      )
-      .join("");
-
-    attachDragHandlers();
-  }
-
-  function attachDragHandlers() {
-    const items = orderList.querySelectorAll(".order-item");
-
-    items.forEach((item) => {
-      item.addEventListener("dragstart", () => {
-        item.classList.add("dragging");
-      });
-      item.addEventListener("dragend", () => {
-        item.classList.remove("dragging");
-        persistCurrentOrder();
-      });
-    });
-
-    orderList.addEventListener("dragover", (e) => {
-      e.preventDefault();
-      const dragging = orderList.querySelector(".dragging");
-      if (!dragging) return;
-      const after =
-        disposizioneView === "grid"
-          ? getDragAfterElementGrid(orderList, e.clientX, e.clientY)
-          : getDragAfterElement(orderList, e.clientY);
-      if (after == null) {
-        orderList.appendChild(dragging);
-      } else {
-        orderList.insertBefore(dragging, after);
-      }
-    });
-  }
-
-  function getDragAfterElement(container, y) {
-    const els = [...container.querySelectorAll(".order-item:not(.dragging)")];
-    return els.reduce(
-      (closest, child) => {
-        const box = child.getBoundingClientRect();
-        const offset = y - box.top - box.height / 2;
-        if (offset < 0 && offset > closest.offset) {
-          return { offset, element: child };
-        }
-        return closest;
-      },
-      { offset: Number.NEGATIVE_INFINITY, element: null }
-    ).element;
-  }
-
-  // Grid layout needs a 2D-aware check: find the nearest card to the
-  // pointer, then decide whether to drop before or after it based on
-  // which side of its center the pointer is on.
-  function getDragAfterElementGrid(container, x, y) {
-    const els = [...container.querySelectorAll(".order-item:not(.dragging)")];
-    let nearest = null;
-    let nearestDist = Number.POSITIVE_INFINITY;
-
-    els.forEach((child) => {
-      const box = child.getBoundingClientRect();
-      const centerX = box.left + box.width / 2;
-      const centerY = box.top + box.height / 2;
-      const dist = (x - centerX) ** 2 + (y - centerY) ** 2;
-      if (dist < nearestDist) {
-        nearestDist = dist;
-        nearest = { element: child, isAfter: x > centerX };
-      }
-    });
-
-    if (!nearest) return null;
-    return nearest.isAfter ? nearest.element.nextElementSibling : nearest.element;
-  }
-
-  function persistCurrentOrder() {
-    const filtered = getFilteredSorted();
-    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
-    const newIdSequence = [...orderList.querySelectorAll(".order-item")].map((el) => el.dataset.id);
-
-    newIdSequence.forEach((id, i) => {
-      const product = products.find((p) => p.id === id);
-      if (product) product.order = originalOrders[i];
-    });
-
-    saveProducts(products);
-    renderOrderList();
-  }
-
-  sortSelect.addEventListener("change", () => {
-    if (sortSelect.value === "current") {
-      renderOrderList();
-      return;
-    }
-    // Applying a sort re-arranges the filtered set and saves it as the new order.
-    const filtered = getFilteredSorted();
-    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
-    filtered.forEach((p, i) => {
-      p.order = originalOrders[i];
-    });
-    saveProducts(products);
-    sortSelect.value = "current";
-    renderOrderList();
-  });
-
-  renderOrderList();
 });

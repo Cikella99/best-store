@@ -375,9 +375,10 @@ function initCatalogPage() {
       const categoryOk = !typeParam || p.category === typeParam;
       const subOk = !subParam || p.subcategory === subParam;
       const genderOk = !(cat === "men" || cat === "woman") || p.gender === cat || p.gender === "unisex";
+      const saleOk = cat !== "sales" || !!p.oldPrice;
       const brandOk = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
       const priceOk = p.price >= priceLow && p.price <= priceHigh;
-      return categoryOk && subOk && genderOk && brandOk && priceOk;
+      return categoryOk && subOk && genderOk && saleOk && brandOk && priceOk;
     });
     if (currentSort === "default") items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     if (currentSort === "price-asc") items.sort((a, b) => a.price - b.price);
