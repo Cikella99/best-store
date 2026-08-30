@@ -334,6 +334,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const disposizioneEmpty = document.getElementById("disposizione-empty");
   const sortSelect = document.getElementById("disposizione-sort");
   let activeFilter = "all";
+  let disposizioneView = "grid";
+
+  document.querySelectorAll("[data-disp-view]").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll("[data-disp-view]").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      disposizioneView = btn.dataset.dispView;
+      orderList.classList.toggle("grid-view", disposizioneView === "grid");
+    });
+  });
 
   document.querySelectorAll(".chip-tab").forEach((chip) => {
     chip.addEventListener("click", () => {
@@ -408,7 +418,10 @@ document.addEventListener("DOMContentLoaded", () => {
       e.preventDefault();
       const dragging = orderList.querySelector(".dragging");
       if (!dragging) return;
-      const after = getDragAfterElement(orderList, e.clientY);
+      const after =
+        disposizioneView === "grid"
+          ? getDragAfterElementGrid(orderList, e.clientX, e.clientY)
+          : getDragAfterElement(orderList, e.clientY);
       if (after == null) {
         orderList.appendChild(dragging);
       } else {
@@ -430,6 +443,29 @@ document.addEventListener("DOMContentLoaded", () => {
       },
       { offset: Number.NEGATIVE_INFINITY, element: null }
     ).element;
+  }
+
+  // Grid layout needs a 2D-aware check: find the nearest card to the
+  // pointer, then decide whether to drop before or after it based on
+  // which side of its center the pointer is on.
+  function getDragAfterElementGrid(container, x, y) {
+    const els = [...container.querySelectorAll(".order-item:not(.dragging)")];
+    let nearest = null;
+    let nearestDist = Number.POSITIVE_INFINITY;
+
+    els.forEach((child) => {
+      const box = child.getBoundingClientRect();
+      const centerX = box.left + box.width / 2;
+      const centerY = box.top + box.height / 2;
+      const dist = (x - centerX) ** 2 + (y - centerY) ** 2;
+      if (dist < nearestDist) {
+        nearestDist = dist;
+        nearest = { element: child, isAfter: x > centerX };
+      }
+    });
+
+    if (!nearest) return null;
+    return nearest.isAfter ? nearest.element.nextElementSibling : nearest.element;
   }
 
   function persistCurrentOrder() {

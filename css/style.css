@@ -172,13 +172,15 @@ button {
   z-index: 50;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.15s ease, visibility 0s linear 0.35s;
+  transform: translateY(-12px);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.35s;
 }
 
 .nav-item:hover .mega-panel {
   opacity: 1;
   visibility: visible;
-  transition: opacity 0.15s ease, visibility 0s linear 0s;
+  transform: translateY(0);
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0s;
 }
 
 /* invisible bridge so moving the cursor from the link into the panel
@@ -207,15 +209,15 @@ button {
   border-radius: var(--border-radius-md);
   overflow: hidden;
   min-height: 140px;
-  border: 2px solid transparent;
+  box-shadow: 0 0 0 2px transparent;
   background: url("../images/hero image.webp") center / cover no-repeat;
   padding: 16px;
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .mega-banner:hover {
   transform: scale(1.02);
-  border-color: var(--orange);
+  box-shadow: 0 0 0 2px var(--orange);
 }
 
 .mega-banner::after {
@@ -349,7 +351,7 @@ button {
 /* Hero */
 
 .hero {
-  margin: 8px auto 16px;
+  margin: 8px auto 48px;
 }
 
 .hero-inner {
@@ -902,8 +904,8 @@ button {
   gap: 2px;
   opacity: 0;
   visibility: hidden;
-  transform: translateY(-6px);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0.15s;
+  transform: translateY(-12px);
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0.22s;
   z-index: 40;
 }
 
@@ -916,7 +918,7 @@ button {
   opacity: 1;
   visibility: visible;
   transform: translateY(0);
-  transition: opacity 0.15s ease, transform 0.15s ease, visibility 0s linear 0s;
+  transition: opacity 0.22s ease, transform 0.22s cubic-bezier(0.22, 1, 0.36, 1), visibility 0s linear 0s;
 }
 
 .filter-option {
@@ -1607,6 +1609,12 @@ button {
   .products-grid {
     grid-template-columns: 1fr;
   }
+  .reviews-inner {
+    padding: 16px;
+  }
+  .review-card {
+    padding: 16px;
+  }
   .newsletter-form {
     flex-direction: column;
     align-items: stretch;
@@ -1790,6 +1798,55 @@ button {
 .order-tags {
   font-size: 0.72rem;
   color: var(--text-muted);
+}
+
+.disposizione-toolbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.order-list.grid-view {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr));
+  gap: 16px;
+}
+
+.order-list.grid-view .order-item {
+  position: relative;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 14px;
+}
+
+.order-list.grid-view .order-item img {
+  width: 100%;
+  height: 110px;
+}
+
+.order-list.grid-view .order-num {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: var(--orange);
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.order-list.grid-view .drag-handle {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+}
+
+.order-list.grid-view .order-info {
+  width: 100%;
 }
 
 .admin-toolbar {

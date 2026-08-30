@@ -80,16 +80,26 @@
           <button type="button" class="chip-tab" data-filter="gender:men">Uomo</button>
           <button type="button" class="chip-tab" data-filter="gender:woman">Donna</button>
         </div>
-        <select id="disposizione-sort" class="disposizione-sort">
-          <option value="current">Ordine attuale</option>
-          <option value="recent">Più recenti</option>
-          <option value="oldest">Più vecchi</option>
-        </select>
+        <div class="disposizione-toolbar-right">
+          <select id="disposizione-sort" class="disposizione-sort">
+            <option value="current">Ordine attuale</option>
+            <option value="recent">Più recenti</option>
+            <option value="oldest">Più vecchi</option>
+          </select>
+          <div class="view-toggle">
+            <button type="button" class="view-btn" data-disp-view="list" aria-label="Vista elenco">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="view-btn active" data-disp-view="grid" aria-label="Vista blocchi">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       <p class="disposizione-hint">Trascina i blocchi per cambiare l'ordine con cui i prodotti compaiono sul sito, in questa sezione.</p>
 
-      <div class="order-list" id="order-list"></div>
+      <div class="order-list grid-view" id="order-list"></div>
       <div id="disposizione-empty" class="cart-empty" hidden>
         <p>Nessun prodotto in questa sezione.</p>
       </div>
