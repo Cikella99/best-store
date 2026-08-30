@@ -130,6 +130,8 @@ button {
 
 .main-nav a.active {
   text-decoration: underline;
+  text-decoration-color: var(--orange);
+  text-decoration-thickness: 2.5px;
   text-underline-offset: 4px;
   font-weight: 600;
 }
@@ -141,7 +143,7 @@ button {
 }
 
 .main-nav > a:hover,
-.nav-item > a:hover {
+.nav-item:hover > a {
   transform: scale(1.06);
   text-decoration: underline;
   text-decoration-color: var(--orange);
@@ -224,20 +226,8 @@ button {
   background: rgba(236, 72, 153, 0.5);
 }
 
-.mega-banner.tint-orange-1::after {
-  background: rgba(242, 84, 29, 0.3);
-}
-
-.mega-banner.tint-orange-2::after {
-  background: rgba(242, 84, 29, 0.48);
-}
-
-.mega-banner.tint-orange-3::after {
-  background: rgba(242, 84, 29, 0.66);
-}
-
-.mega-banner.tint-orange-4::after {
-  background: rgba(242, 84, 29, 0.84);
+.mega-banner.tint-orange::after {
+  background: rgba(242, 84, 29, 0.55);
 }
 
 .shop-panel {
@@ -318,7 +308,9 @@ button {
   justify-content: center;
 }
 
-.account-btn {
+.account-btn,
+.wishlist-header-btn {
+  position: relative;
   width: 36px;
   height: 36px;
   flex-shrink: 0;
@@ -332,12 +324,14 @@ button {
   transition: background 0.2s ease, color 0.2s ease;
 }
 
-.account-btn svg {
+.account-btn svg,
+.wishlist-header-btn svg {
   width: 17px;
   height: 17px;
 }
 
-.account-btn:hover {
+.account-btn:hover,
+.wishlist-header-btn:hover {
   background: var(--orange);
   color: #ffffff;
 }
@@ -373,6 +367,9 @@ button {
 /* Trust strip */
 
 .trust-strip {
+  background: #f3f3f3;
+  border-radius: var(--border-radius-lg);
+  padding: 32px;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 16px;
@@ -384,13 +381,24 @@ button {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  gap: 8px;
+  gap: 12px;
+}
+
+.trust-icon {
+  width: 64px;
+  height: 64px;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: var(--orange);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .trust-item svg {
-  width: 28px;
-  height: 28px;
-  color: var(--orange);
+  width: 30px;
+  height: 30px;
+  color: #ffffff;
 }
 
 .trust-item span {
@@ -569,6 +577,9 @@ button {
 /* Reviews */
 
 .reviews {
+  background: #f3f3f3;
+  border-radius: var(--border-radius-lg);
+  padding: 40px;
   margin-bottom: 56px;
 }
 
@@ -604,6 +615,7 @@ button {
 }
 
 .review-card {
+  background: #ffffff;
   border: 2px solid #eee;
   border-radius: var(--border-radius-md);
   padding: 20px;
@@ -964,6 +976,86 @@ button {
   height: 6px;
   border-radius: 50%;
   background: #ffffff;
+}
+
+.price-panel {
+  min-width: 240px;
+  padding: 18px 16px;
+}
+
+.price-slider-values {
+  text-align: center;
+  font-weight: 700;
+  font-size: 0.9rem;
+  margin-bottom: 18px;
+}
+
+.range-slider {
+  position: relative;
+  height: 20px;
+}
+
+.range-track {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  height: 4px;
+  background: #e0e0e0;
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.range-fill {
+  position: absolute;
+  top: 50%;
+  height: 4px;
+  background: var(--orange);
+  border-radius: 2px;
+  transform: translateY(-50%);
+}
+
+.range-slider input[type="range"] {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 100%;
+  margin: 0;
+  background: transparent;
+  appearance: none;
+  -webkit-appearance: none;
+  pointer-events: none;
+}
+
+.range-slider input[type="range"]::-webkit-slider-thumb {
+  appearance: none;
+  -webkit-appearance: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--orange);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.range-slider input[type="range"]::-moz-range-thumb {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--orange);
+  border: 2px solid #ffffff;
+  box-shadow: 0 0 0 1px var(--orange);
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.range-slider input[type="range"]::-webkit-slider-runnable-track,
+.range-slider input[type="range"]::-moz-range-track {
+  background: transparent;
 }
 
 .empty-state {

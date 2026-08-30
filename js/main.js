@@ -72,6 +72,34 @@ function toggleWishlist(id) {
     list.splice(idx, 1);
   }
   localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
+  updateWishlistBadge();
+}
+
+function updateWishlistBadge() {
+  const badge = document.getElementById("wishlist-count");
+  if (!badge) return;
+  const count = getWishlist().length;
+  badge.textContent = count;
+  badge.hidden = count === 0;
+}
+
+function renderWishlistPage() {
+  const root = document.getElementById("wishlist-content");
+  if (!root) return;
+
+  function render() {
+    const ids = getWishlist();
+    const items = PRODUCTS.filter((p) => ids.includes(p.id));
+    root.innerHTML = items.length
+      ? `<div class="products-grid">${items.map(productCardHTML).join("")}</div>`
+      : `<div class="cart-empty"><p>Non hai ancora salvato nessun preferito.</p><a href="catalogo.html" class="btn btn-primary">Vai allo shop</a></div>`;
+  }
+
+  document.addEventListener("click", (e) => {
+    if (e.target.closest(".wishlist-btn")) render();
+  });
+
+  render();
 }
 
 function productCardHTML(p) {
@@ -279,6 +307,12 @@ function initCatalogPage() {
     plainTitle.textContent = pageTitle;
   }
 
+  const typeParam = params.get("type");
+  const categoriaFilter = document.getElementById("filter-categoria");
+  if (typeParam && categoriaFilter) {
+    categoriaFilter.hidden = true;
+  }
+
   const brands = [...new Set(PRODUCTS.map((p) => p.brand))];
   const brandOptions = document.getElementById("brand-options");
   brandOptions.innerHTML = brands
@@ -286,19 +320,42 @@ function initCatalogPage() {
     .join("");
 
   let selectedBrands = [];
-  let priceRange = "all";
   let currentSort = "default";
 
-  function priceInRange(price, range) {
-    if (range === "all") return true;
-    const [min, max] = range.split("-").map(Number);
-    return price >= min && price <= max;
+  const prices = PRODUCTS.map((p) => p.price);
+  const priceMin = Math.min(...prices);
+  const priceMax = Math.max(...prices);
+  let priceLow = priceMin;
+  let priceHigh = priceMax;
+
+  const minSlider = document.getElementById("price-min");
+  const maxSlider = document.getElementById("price-max");
+  const minLabel = document.getElementById("price-min-label");
+  const maxLabel = document.getElementById("price-max-label");
+  const rangeFill = document.getElementById("range-fill");
+
+  [minSlider, maxSlider].forEach((s) => {
+    s.min = priceMin;
+    s.max = priceMax;
+  });
+  minSlider.value = priceMin;
+  maxSlider.value = priceMax;
+
+  function updateSliderUI() {
+    minLabel.textContent = `€${priceLow}`;
+    maxLabel.textContent = `€${priceHigh}`;
+    const span = priceMax - priceMin || 1;
+    const leftPct = ((priceLow - priceMin) / span) * 100;
+    const rightPct = ((priceHigh - priceMin) / span) * 100;
+    rangeFill.style.left = `${leftPct}%`;
+    rangeFill.style.width = `${rightPct - leftPct}%`;
   }
 
   function renderGrid() {
     let items = PRODUCTS.filter((p) => {
       const brandOk = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
-      return brandOk && priceInRange(p.price, priceRange);
+      const priceOk = p.price >= priceLow && p.price <= priceHigh;
+      return brandOk && priceOk;
     });
     if (currentSort === "price-asc") items.sort((a, b) => a.price - b.price);
     if (currentSort === "price-desc") items.sort((a, b) => b.price - a.price);
@@ -314,14 +371,23 @@ function initCatalogPage() {
     renderGrid();
   });
 
-  const priceOptions = document.getElementById("price-options");
-  const priceBtn = document.querySelector('[data-key="prezzo"] .filter-btn');
-  const priceLabels = { all: "Prezzo", "0-150": "Fino a €150", "150-220": "€150 – €220", "220-9999": "Oltre €220" };
-  priceOptions.addEventListener("change", (e) => {
-    priceRange = e.target.value;
-    priceBtn.firstChild.textContent = priceLabels[priceRange];
+  minSlider.addEventListener("input", () => {
+    if (Number(minSlider.value) > Number(maxSlider.value)) minSlider.value = maxSlider.value;
+    priceLow = Number(minSlider.value);
+    priceHigh = Number(maxSlider.value);
+    updateSliderUI();
     renderGrid();
   });
+
+  maxSlider.addEventListener("input", () => {
+    if (Number(maxSlider.value) < Number(minSlider.value)) maxSlider.value = minSlider.value;
+    priceLow = Number(minSlider.value);
+    priceHigh = Number(maxSlider.value);
+    updateSliderUI();
+    renderGrid();
+  });
+
+  updateSliderUI();
 
   const sortOptions = document.getElementById("sort-options");
   const sortBtn = document.querySelector('[data-key="sort"] .filter-btn');
@@ -368,7 +434,7 @@ function setActiveNav() {
     }
   } else if (path === "prodotto.html") {
     document.querySelector('.nav-item > a[href="catalogo.html"]')?.classList.add("active");
-  } else if (path === "carrello.html" || path === "login.html") {
+  } else if (path === "carrello.html" || path === "login.html" || path === "preferiti.html") {
     // no top-level nav item corresponds to these pages
   } else {
     document.querySelector('.main-nav > a[href="index.html"]')?.classList.add("active");
@@ -396,7 +462,9 @@ function initLoginPage() {
 
   phoneStep.addEventListener("submit", (e) => {
     e.preventDefault();
-    enteredName = document.getElementById("login-name").value.trim();
+    const name = document.getElementById("login-name").value.trim();
+    const surname = document.getElementById("login-surname").value.trim();
+    enteredName = [name, surname].filter(Boolean).join(" ");
     sentPhone.textContent = document.getElementById("login-phone").value.trim();
     phoneStep.hidden = true;
     codeStep.hidden = false;
@@ -425,7 +493,9 @@ document.addEventListener("DOMContentLoaded", () => {
   renderProductDetail();
   initCatalogPage();
   renderCartPage();
+  renderWishlistPage();
   initLoginPage();
   setActiveNav();
   updateCartBadge();
+  updateWishlistBadge();
 });

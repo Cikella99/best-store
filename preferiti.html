@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shop — Best Store</title>
+  <title>Preferiti — Best Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -28,7 +28,7 @@
         <a href="index.html">menu</a>
 
         <div class="nav-item">
-          <a href="catalogo.html" class="active">shop</a>
+          <a href="catalogo.html">shop</a>
           <div class="mega-panel shop-panel">
             <a href="catalogo.html?type=shoes" class="mega-banner tint-orange"><span>Shoes</span></a>
             <a href="catalogo.html?type=clothing" class="mega-banner tint-orange"><span>Clothing</span></a>
@@ -119,96 +119,9 @@
   </header>
 
   <main>
-    <section class="catalog-hero container" id="catalog-hero" hidden>
-      <div class="catalog-hero-inner" id="catalog-hero-inner">
-        <h1 id="catalog-hero-title"></h1>
-      </div>
-    </section>
-
-    <section class="catalog container">
-      <div class="catalog-header" id="catalog-header">
-        <h1 class="catalog-title" id="catalog-title">Shop</h1>
-      </div>
-
-      <div class="catalog-filters">
-        <div class="filter-bar">
-          <div class="filter-dropdown" data-key="categoria" id="filter-categoria">
-            <button type="button" class="filter-btn">Categoria<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <div class="filter-panel">
-              <label class="filter-option"><input type="checkbox">Sneaker</label>
-              <label class="filter-option"><input type="checkbox">Abbigliamento</label>
-              <label class="filter-option"><input type="checkbox">Accessori</label>
-            </div>
-          </div>
-
-          <div class="filter-dropdown" data-key="brand">
-            <button type="button" class="filter-btn">Brand<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <div class="filter-panel" id="brand-options"></div>
-          </div>
-
-          <div class="filter-dropdown" data-key="tipologia">
-            <button type="button" class="filter-btn">Tipologia<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <div class="filter-panel">
-              <label class="filter-option"><input type="checkbox">Running</label>
-              <label class="filter-option"><input type="checkbox">Lifestyle</label>
-              <label class="filter-option"><input type="checkbox">Basket</label>
-              <label class="filter-option"><input type="checkbox">Trail</label>
-            </div>
-          </div>
-
-          <div class="filter-dropdown" data-key="colore">
-            <button type="button" class="filter-btn">Colore<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <div class="filter-panel">
-              <label class="filter-option"><input type="checkbox">Bianco</label>
-              <label class="filter-option"><input type="checkbox">Nero</label>
-              <label class="filter-option"><input type="checkbox">Rosso</label>
-              <label class="filter-option"><input type="checkbox">Blu</label>
-              <label class="filter-option"><input type="checkbox">Giallo</label>
-              <label class="filter-option"><input type="checkbox">Multicolor</label>
-            </div>
-          </div>
-
-          <div class="filter-dropdown" data-key="taglia">
-            <button type="button" class="filter-btn">Taglia<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <div class="filter-panel">
-              <label class="filter-option"><input type="checkbox">39</label>
-              <label class="filter-option"><input type="checkbox">40</label>
-              <label class="filter-option"><input type="checkbox">41</label>
-              <label class="filter-option"><input type="checkbox">42</label>
-              <label class="filter-option"><input type="checkbox">43</label>
-              <label class="filter-option"><input type="checkbox">44</label>
-              <label class="filter-option"><input type="checkbox">45</label>
-            </div>
-          </div>
-
-          <div class="filter-dropdown" data-key="prezzo">
-            <button type="button" class="filter-btn">Prezzo<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-            <div class="filter-panel price-panel">
-              <div class="price-slider-values">
-                <span id="price-min-label">€0</span> &ndash; <span id="price-max-label">€0</span>
-              </div>
-              <div class="range-slider">
-                <div class="range-track"></div>
-                <div class="range-fill" id="range-fill"></div>
-                <input type="range" id="price-min" step="1">
-                <input type="range" id="price-max" step="1">
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        <div class="filter-dropdown sort-dropdown" data-key="sort">
-          <button type="button" class="filter-btn">In evidenza<svg class="chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
-          <div class="filter-panel" id="sort-options">
-            <label class="filter-option"><input type="radio" name="sort" value="default" checked>In evidenza</label>
-            <label class="filter-option"><input type="radio" name="sort" value="price-asc">Prezzo: crescente</label>
-            <label class="filter-option"><input type="radio" name="sort" value="price-desc">Prezzo: decrescente</label>
-          </div>
-        </div>
-      </div>
-
-      <div class="products-grid" id="catalog-grid"></div>
+    <section class="cart-page container">
+      <h1 class="catalog-title">I tuoi preferiti</h1>
+      <div id="wishlist-content"></div>
     </section>
   </main>
 

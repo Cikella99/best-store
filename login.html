@@ -30,10 +30,10 @@
         <div class="nav-item">
           <a href="catalogo.html">shop</a>
           <div class="mega-panel shop-panel">
-            <a href="catalogo.html?type=shoes" class="mega-banner tint-orange-1"><span>Shoes</span></a>
-            <a href="catalogo.html?type=clothing" class="mega-banner tint-orange-2"><span>Clothing</span></a>
-            <a href="catalogo.html?type=accessories" class="mega-banner tint-orange-3"><span>Accessories</span></a>
-            <a href="catalogo.html" class="mega-banner tint-orange-4"><span>Tutti i prodotti</span></a>
+            <a href="catalogo.html?type=shoes" class="mega-banner tint-orange"><span>Shoes</span></a>
+            <a href="catalogo.html?type=clothing" class="mega-banner tint-orange"><span>Clothing</span></a>
+            <a href="catalogo.html?type=accessories" class="mega-banner tint-orange"><span>Accessories</span></a>
+            <a href="catalogo.html" class="mega-banner tint-orange"><span>Tutti i prodotti</span></a>
           </div>
         </div>
 
@@ -102,6 +102,12 @@
             <path d="M4.5 20c0-4 3.5-6.5 7.5-6.5s7.5 2.5 7.5 6.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
           </svg>
         </a>
+        <a href="preferiti.html" class="wishlist-header-btn" aria-label="Preferiti">
+          <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M12 20.2s-7.2-4.4-9.7-8.8C1 8 2.6 4.3 6.2 4.3c2.1 0 3.7 1.2 5.8 3.4 2.1-2.2 3.7-3.4 5.8-3.4 3.6 0 5.2 3.7 3.9 7.1-2.5 4.4-9.7 8.8-9.7 8.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/>
+          </svg>
+          <span class="cart-count" id="wishlist-count" hidden>0</span>
+        </a>
         <a href="carrello.html" class="cart-btn" aria-label="Carrello">
           <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
             <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.1 15.9 4.5 17 5.4 17H17M17 17C15.9 17 15 17.9 15 19C15 20.1 15.9 21 17 21C18.1 21 19 20.1 19 19C19 17.9 18.1 17 17 17ZM9 19C9 20.1 8.1 21 7 21C5.9 21 5 20.1 5 19C5 17.9 5.9 17 7 17C8.1 17 9 17.9 9 19Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
@@ -121,6 +127,9 @@
         <form id="phone-step" class="login-form">
           <label>Nome
             <input type="text" id="login-name" required placeholder="Il tuo nome">
+          </label>
+          <label>Cognome
+            <input type="text" id="login-surname" required placeholder="Il tuo cognome">
           </label>
           <label>Numero di telefono
             <input type="tel" id="login-phone" required placeholder="+39 333 1234567">
