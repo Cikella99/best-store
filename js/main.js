@@ -105,12 +105,23 @@ function renderWishlistPage() {
 function productCardHTML(p) {
   const discount = discountPercent(p);
   const isFav = getWishlist().includes(p.id);
+  const images = productImages(p);
   return `
     <article class="product-card">
-      <a class="product-image" href="prodotto.html?id=${p.id}">
-        ${discount ? `<span class="badge">-${discount}%</span>` : ""}
-        <img src="${p.image}" alt="${p.brand} ${p.model}" loading="lazy">
-      </a>
+      <div class="product-image-wrap" data-id="${p.id}" data-index="0">
+        <a class="product-image" href="prodotto.html?id=${p.id}">
+          ${discount ? `<span class="badge">-${discount}%</span>` : ""}
+          <img src="${images[0]}" alt="${p.brand} ${p.model}" loading="lazy">
+        </a>
+        ${
+          images.length > 1
+            ? `<button type="button" class="product-image-next" aria-label="Foto successiva">
+                 <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               </button>
+               <div class="product-image-dots">${images.map((_, i) => `<span class="product-image-dot${i === 0 ? " active" : ""}"></span>`).join("")}</div>`
+            : ""
+        }
+      </div>
       <button type="button" class="wishlist-btn${isFav ? " active" : ""}" data-id="${p.id}" aria-label="Aggiungi ai preferiti">
         <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.2s-7.2-4.4-9.7-8.8C1 8 2.6 4.3 6.2 4.3c2.1 0 3.7 1.2 5.8 3.4 2.1-2.2 3.7-3.4 5.8-3.4 3.6 0 5.2 3.7 3.9 7.1-2.5 4.4-9.7 8.8-9.7 8.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
       </button>
@@ -152,8 +163,37 @@ function renderProductDetail() {
 
   document.title = `${product.brand} ${product.model} — Best Store`;
 
-  document.getElementById("detail-image").src = product.image;
-  document.getElementById("detail-image").alt = `${product.brand} ${product.model}`;
+  const detailImageEl = document.getElementById("detail-image");
+  const detailNextBtn = document.getElementById("detail-image-next");
+  const detailDots = document.getElementById("detail-image-dots");
+  const images = productImages(product);
+  let detailIndex = 0;
+
+  function showDetailImage(i) {
+    detailIndex = (i + images.length) % images.length;
+    detailImageEl.src = images[detailIndex];
+    detailDots.querySelectorAll(".product-image-dot").forEach((d, di) => d.classList.toggle("active", di === detailIndex));
+  }
+
+  detailImageEl.src = images[0];
+  detailImageEl.alt = `${product.brand} ${product.model}`;
+  if (images.length > 1) {
+    detailNextBtn.hidden = false;
+    detailDots.innerHTML = images.map((_, i) => `<span class="product-image-dot${i === 0 ? " active" : ""}"></span>`).join("");
+    detailNextBtn.addEventListener("click", () => showDetailImage(detailIndex + 1));
+
+    let detailTouchStartX = 0;
+    const detailImageWrap = document.querySelector(".product-detail-image");
+    detailImageWrap.addEventListener("touchstart", (e) => { detailTouchStartX = e.touches[0].clientX; }, { passive: true });
+    detailImageWrap.addEventListener("touchend", (e) => {
+      const dx = e.changedTouches[0].clientX - detailTouchStartX;
+      if (Math.abs(dx) > 30) showDetailImage(detailIndex + (dx < 0 ? 1 : -1));
+    });
+  } else {
+    detailNextBtn.hidden = true;
+    detailDots.innerHTML = "";
+  }
+
   document.getElementById("detail-brand").textContent = product.brand;
   document.getElementById("detail-model").textContent = product.model;
   document.getElementById("detail-price").textContent = `€${product.price}`;
@@ -494,6 +534,49 @@ document.addEventListener("click", (e) => {
   e.preventDefault();
   toggleWishlist(btn.dataset.id);
   btn.classList.toggle("active");
+});
+
+/* ---------- Product card image carousel (hover arrow + swipe) ---------- */
+
+function cycleCardImage(wrap, direction) {
+  const product = getProducts().find((p) => p.id === wrap.dataset.id);
+  if (!product) return;
+  const images = productImages(product);
+  if (images.length < 2) return;
+  const next = (Number(wrap.dataset.index || 0) + direction + images.length) % images.length;
+  wrap.dataset.index = next;
+  const img = wrap.querySelector(".product-image img");
+  if (img) img.src = images[next];
+  wrap.querySelectorAll(".product-image-dot").forEach((d, i) => d.classList.toggle("active", i === next));
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".product-image-next");
+  if (!btn) return;
+  const wrap = btn.closest(".product-image-wrap");
+  if (!wrap) return;
+  e.preventDefault();
+  e.stopPropagation();
+  cycleCardImage(wrap, 1);
+});
+
+let cardTouchStartX = 0;
+document.addEventListener(
+  "touchstart",
+  (e) => {
+    if (e.target.closest(".product-image-wrap")) cardTouchStartX = e.touches[0].clientX;
+  },
+  { passive: true }
+);
+
+document.addEventListener("touchend", (e) => {
+  const wrap = e.target.closest(".product-image-wrap");
+  if (!wrap) return;
+  const dx = e.changedTouches[0].clientX - cardTouchStartX;
+  if (Math.abs(dx) > 30) {
+    e.preventDefault();
+    cycleCardImage(wrap, dx < 0 ? 1 : -1);
+  }
 });
 
 function initLoginPage() {

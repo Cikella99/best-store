@@ -150,12 +150,11 @@
       <form id="product-form" class="admin-form">
         <input type="hidden" id="product-id">
 
-        <div class="admin-form-image">
-          <img id="image-preview" src="" alt="Anteprima" hidden>
-          <div id="image-placeholder" class="image-placeholder">Nessuna immagine</div>
+        <div class="admin-form-images">
+          <div class="admin-image-gallery" id="admin-image-gallery"></div>
           <label class="btn btn-small admin-upload-btn">
-            Carica immagine
-            <input type="file" id="product-image-input" accept="image/*" hidden>
+            + Aggiungi foto
+            <input type="file" id="product-image-input" accept="image/*" multiple hidden>
           </label>
         </div>
 

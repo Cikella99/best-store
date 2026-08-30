@@ -97,6 +97,24 @@ const PRODUCTS = [
     gender: "unisex",
     order: 7,
     createdAt: "2026-08-15T10:00:00.000Z"
+  },
+  {
+    id: "13",
+    brand: "Vans",
+    model: "Authentic Red Stars",
+    price: 89,
+    image: "images/shoes/scarpe-13-1.webp",
+    images: [
+      "images/shoes/scarpe-13-1.webp",
+      "images/shoes/scarpe-13-2.webp",
+      "images/shoes/scarpe-13-3.webp",
+      "images/shoes/scarpe-13-4.webp"
+    ],
+    desc: "Tela panna con stelle rosse all-over e profilo a contrasto: la Authentic in un pattern grafico che si fa notare.",
+    category: "shoes",
+    gender: "unisex",
+    order: 8,
+    createdAt: "2026-08-30T10:00:00.000Z"
   }
 ];
 
@@ -109,6 +127,10 @@ function getProducts() {
   } catch {
     return PRODUCTS;
   }
+}
+
+function productImages(p) {
+  return p.images && p.images.length ? p.images : [p.image];
 }
 
 function getOrderedProducts() {

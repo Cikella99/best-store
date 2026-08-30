@@ -70,11 +70,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const oldPriceField = document.getElementById("product-oldprice");
   const descField = document.getElementById("product-desc");
   const imageInput = document.getElementById("product-image-input");
-  const imagePreview = document.getElementById("image-preview");
-  const imagePlaceholder = document.getElementById("image-placeholder");
+  const imageGallery = document.getElementById("admin-image-gallery");
 
   let products = getProducts();
-  let currentImage = "";
+  let currentImages = [];
   let currentView = "grid";
   let activeFilter = "all";
 
@@ -357,11 +356,31 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
+  function renderImageGallery() {
+    imageGallery.innerHTML = currentImages.length
+      ? currentImages
+          .map(
+            (src, i) => `
+        <div class="admin-image-thumb${i === 0 ? " is-cover" : ""}">
+          <img src="${adminImgSrc(src)}" alt="Foto ${i + 1}">
+          <button type="button" class="admin-image-remove" data-index="${i}" aria-label="Rimuovi foto">${deleteIconSVG}</button>
+        </div>`
+          )
+          .join("")
+      : `<p class="admin-image-empty">Nessuna foto caricata</p>`;
+
+    imageGallery.querySelectorAll(".admin-image-remove").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        currentImages.splice(Number(btn.dataset.index), 1);
+        renderImageGallery();
+      });
+    });
+  }
+
   function openModal(product) {
     form.reset();
-    imagePreview.hidden = true;
-    imagePlaceholder.hidden = false;
-    currentImage = "";
+    currentImages = product ? productImages(product).slice() : [];
+    renderImageGallery();
     setColorSelection(null);
 
     if (product) {
@@ -378,10 +397,6 @@ document.addEventListener("DOMContentLoaded", () => {
       priceField.value = product.price;
       oldPriceField.value = product.oldPrice || "";
       descField.value = product.desc || "";
-      currentImage = product.image;
-      imagePreview.src = adminImgSrc(product.image);
-      imagePreview.hidden = false;
-      imagePlaceholder.hidden = true;
     } else {
       modalTitle.textContent = "Aggiungi prodotto";
       idField.value = "";
@@ -406,16 +421,18 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   imageInput.addEventListener("change", () => {
-    const file = imageInput.files[0];
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      currentImage = reader.result;
-      imagePreview.src = currentImage;
-      imagePreview.hidden = false;
-      imagePlaceholder.hidden = true;
-    };
-    reader.readAsDataURL(file);
+    const files = [...imageInput.files];
+    if (!files.length) return;
+    const startIndex = currentImages.length;
+    files.forEach((file, i) => {
+      const reader = new FileReader();
+      reader.onload = () => {
+        currentImages[startIndex + i] = reader.result;
+        renderImageGallery();
+      };
+      reader.readAsDataURL(file);
+    });
+    imageInput.value = "";
   });
 
   form.addEventListener("submit", (e) => {
@@ -433,7 +450,8 @@ document.addEventListener("DOMContentLoaded", () => {
       color: selectedColor ? selectedColor.value : "",
       price: Number(priceField.value),
       desc: descField.value.trim(),
-      image: currentImage || "images/logo.jpeg"
+      image: currentImages[0] || "images/logo.jpeg",
+      images: currentImages.length > 1 ? currentImages.slice() : undefined
     };
     if (oldPriceField.value) {
       data.oldPrice = Number(oldPriceField.value);
