@@ -67,3 +67,22 @@ const PRODUCTS = [
     desc: "Mesh nero e overlay bianchi a contrasto: il runner Asics che unisce prestazioni tecniche e stile street."
   }
 ];
+
+const ADMIN_PRODUCTS_KEY = "bestStoreAdminProducts";
+
+function getProducts() {
+  try {
+    const stored = localStorage.getItem(ADMIN_PRODUCTS_KEY);
+    return stored ? JSON.parse(stored) : PRODUCTS;
+  } catch {
+    return PRODUCTS;
+  }
+}
+
+function saveProducts(list) {
+  localStorage.setItem(ADMIN_PRODUCTS_KEY, JSON.stringify(list));
+}
+
+function resetProducts() {
+  localStorage.removeItem(ADMIN_PRODUCTS_KEY);
+}

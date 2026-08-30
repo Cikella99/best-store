@@ -89,7 +89,7 @@ function renderWishlistPage() {
 
   function render() {
     const ids = getWishlist();
-    const items = PRODUCTS.filter((p) => ids.includes(p.id));
+    const items = getProducts().filter((p) => ids.includes(p.id));
     root.innerHTML = items.length
       ? `<div class="products-grid">${items.map(productCardHTML).join("")}</div>`
       : `<div class="cart-empty"><p>Non hai ancora salvato nessun preferito.</p><a href="catalogo.html" class="btn btn-primary">Vai allo shop</a></div>`;
@@ -134,16 +134,21 @@ function productCardHTML(p) {
 function renderPopularGrid() {
   const grid = document.getElementById("popular-grid");
   if (!grid) return;
-  grid.innerHTML = PRODUCTS.map(productCardHTML).join("");
+  grid.innerHTML = getProducts().map(productCardHTML).join("");
 }
 
 function renderProductDetail() {
   const root = document.getElementById("product-detail");
   if (!root) return;
 
+  const products = getProducts();
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
-  const product = PRODUCTS.find((p) => p.id === id) || PRODUCTS[0];
+  const product = products.find((p) => p.id === id) || products[0];
+  if (!product) {
+    root.innerHTML = "<p>Nessun prodotto disponibile al momento.</p>";
+    return;
+  }
 
   document.title = `${product.brand} ${product.model} — Best Store`;
 
@@ -169,7 +174,7 @@ function renderProductDetail() {
   const crumb = document.getElementById("detail-model-crumb");
   if (crumb) crumb.textContent = `${product.brand} ${product.model}`;
 
-  const related = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
+  const related = products.filter((p) => p.id !== product.id).slice(0, 4);
   document.getElementById("related-grid").innerHTML = related.map(productCardHTML).join("");
 
   document.querySelectorAll(".size-pill").forEach((pill) => {
@@ -207,6 +212,7 @@ function renderCartPage() {
 
   function render() {
     const cart = getCart();
+    const products = getProducts();
 
     if (!cart.length) {
       root.innerHTML = `
@@ -219,7 +225,7 @@ function renderCartPage() {
 
     const lines = cart
       .map((item) => {
-        const p = PRODUCTS.find((prod) => prod.id === item.id);
+        const p = products.find((prod) => prod.id === item.id);
         if (!p) return "";
         return `
           <div class="cart-item" data-id="${p.id}">
@@ -245,7 +251,7 @@ function renderCartPage() {
       .join("");
 
     const subtotal = cart.reduce((sum, item) => {
-      const p = PRODUCTS.find((prod) => prod.id === item.id);
+      const p = products.find((prod) => prod.id === item.id);
       return sum + (p ? p.price * item.qty : 0);
     }, 0);
 
@@ -313,7 +319,8 @@ function initCatalogPage() {
     categoriaFilter.hidden = true;
   }
 
-  const brands = [...new Set(PRODUCTS.map((p) => p.brand))];
+  const products = getProducts();
+  const brands = [...new Set(products.map((p) => p.brand))];
   const brandOptions = document.getElementById("brand-options");
   brandOptions.innerHTML = brands
     .map((b) => `<label class="filter-option"><input type="checkbox" value="${b}">${b}</label>`)
@@ -322,7 +329,7 @@ function initCatalogPage() {
   let selectedBrands = [];
   let currentSort = "default";
 
-  const prices = PRODUCTS.map((p) => p.price);
+  const prices = products.map((p) => p.price);
   const priceMin = Math.min(...prices);
   const priceMax = Math.max(...prices);
   let priceLow = priceMin;
@@ -352,7 +359,7 @@ function initCatalogPage() {
   }
 
   function renderGrid() {
-    let items = PRODUCTS.filter((p) => {
+    let items = products.filter((p) => {
       const brandOk = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
       const priceOk = p.price >= priceLow && p.price <= priceHigh;
       return brandOk && priceOk;

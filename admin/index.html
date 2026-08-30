@@ -3,11 +3,105 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Best Store — Admin</title>
+  <title>Area Staff — Best Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/style.css">
   <link rel="icon" type="image/jpeg" href="../images/logo.jpeg">
 </head>
 <body>
-  <p>Pannello admin — in costruzione.</p>
+
+  <header class="admin-header">
+    <div class="container admin-header-inner">
+      <a href="../index.html" class="logo">
+        <img src="../images/logo.jpeg" alt="Best Store">
+      </a>
+      <span class="admin-title">Area Staff — Gestione prodotti</span>
+      <a href="../index.html" class="btn btn-primary btn-small">Vai al sito</a>
+    </div>
+  </header>
+
+  <main class="admin-main container">
+    <div class="admin-toolbar">
+      <p class="admin-count"><strong id="product-count">0</strong> prodotti nel catalogo</p>
+      <div class="admin-toolbar-actions">
+        <button type="button" class="link-btn" id="reset-catalog-btn">Ripristina catalogo originale</button>
+        <button type="button" class="btn btn-primary" id="add-product-btn">+ Aggiungi prodotto</button>
+      </div>
+    </div>
+
+    <div class="admin-table-wrap">
+      <table class="admin-table">
+        <thead>
+          <tr>
+            <th></th>
+            <th>Modello</th>
+            <th>Brand</th>
+            <th>Prezzo</th>
+            <th>Sconto</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody id="admin-table-body"></tbody>
+      </table>
+      <div id="admin-empty" class="cart-empty" hidden>
+        <p>Nessun prodotto nel catalogo.</p>
+      </div>
+    </div>
+  </main>
+
+  <div class="admin-modal-backdrop" id="admin-modal-backdrop" hidden>
+    <div class="admin-modal">
+      <div class="admin-modal-header">
+        <h2 id="admin-modal-title">Aggiungi prodotto</h2>
+        <button type="button" class="admin-modal-close" id="admin-modal-close" aria-label="Chiudi">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M6 6l12 12M18 6L6 18" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+
+      <form id="product-form" class="admin-form">
+        <input type="hidden" id="product-id">
+
+        <div class="admin-form-image">
+          <img id="image-preview" src="" alt="Anteprima" hidden>
+          <div id="image-placeholder" class="image-placeholder">Nessuna immagine</div>
+          <label class="btn btn-small admin-upload-btn">
+            Carica immagine
+            <input type="file" id="product-image-input" accept="image/*" hidden>
+          </label>
+        </div>
+
+        <label>Brand
+          <input type="text" id="product-brand" required placeholder="Es. Nike">
+        </label>
+
+        <label>Modello
+          <input type="text" id="product-model" required placeholder="Es. Zoom Vomero 5">
+        </label>
+
+        <div class="admin-form-row">
+          <label>Prezzo (€)
+            <input type="number" id="product-price" required min="0" step="1" placeholder="189">
+          </label>
+          <label>Prezzo pieno (opzionale)
+            <input type="number" id="product-oldprice" min="0" step="1" placeholder="es. 229 se in sconto">
+          </label>
+        </div>
+
+        <label>Descrizione
+          <textarea id="product-desc" rows="3" placeholder="Breve descrizione del prodotto"></textarea>
+        </label>
+
+        <div class="admin-form-actions">
+          <button type="button" class="link-btn" id="admin-cancel-btn">Annulla</button>
+          <button type="submit" class="btn btn-primary btn-large">Salva prodotto</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script src="../js/products-data.js"></script>
+  <script src="../js/admin.js"></script>
 </body>
 </html>
