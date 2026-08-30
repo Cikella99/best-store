@@ -1,10 +1,10 @@
 function productCardHTML(p) {
   return `
     <article class="product-card">
-      <div class="product-image">
+      <a class="product-image" href="prodotto.html?id=${p.id}">
         <span class="badge">${p.badge}</span>
         <img src="${p.image}" alt="${p.brand} ${p.model}" loading="lazy">
-      </div>
+      </a>
       <div class="product-info">
         <div class="product-title">
           <h3>${p.model}</h3>
@@ -13,7 +13,7 @@ function productCardHTML(p) {
         <p class="product-desc">${p.desc}</p>
         <div class="product-footer">
           <span class="price">€${p.price}</span>
-          <a href="prodotto.html?id=${p.id}" class="btn btn-primary btn-small">buy now</a>
+          <a href="prodotto.html?id=${p.id}" class="btn btn-primary btn-small">view</a>
         </div>
       </div>
     </article>`;

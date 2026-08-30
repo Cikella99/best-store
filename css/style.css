@@ -106,8 +106,15 @@ button {
   font-weight: 600;
 }
 
+.main-nav > a,
 .nav-item > a {
   display: inline-block;
+  transition: transform 0.15s ease;
+}
+
+.main-nav > a:hover,
+.nav-item > a:hover {
+  transform: scale(1.06);
 }
 
 /* Mega menu */
@@ -123,7 +130,7 @@ button {
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.14);
   padding: 28px 32px;
   gap: 24px;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, 1fr) 1.3fr;
   z-index: 50;
   opacity: 0;
   visibility: hidden;
@@ -155,22 +162,65 @@ button {
   margin-bottom: 12px;
 }
 
+.mega-banner {
+  position: relative;
+  display: flex;
+  align-items: flex-end;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  min-height: 140px;
+  background: url("../images/hero image.webp") center / cover no-repeat;
+  padding: 16px;
+  transition: transform 0.2s ease;
+}
+
+.mega-banner:hover {
+  transform: scale(1.02);
+}
+
+.mega-banner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.mega-banner.tint-blue::after {
+  background: rgba(37, 99, 235, 0.5);
+}
+
+.mega-banner.tint-pink::after {
+  background: rgba(236, 72, 153, 0.5);
+}
+
+.mega-banner span {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: 1.05rem;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
 .mega-col a {
   display: block;
+  width: fit-content;
   padding: 6px 0;
   font-size: 0.9rem;
   font-weight: 500;
+  transform-origin: left center;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .mega-col a:hover {
+  transform: scale(1.06);
   color: var(--orange);
 }
 
 /* Cart button */
 
 .cart-btn {
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   flex-shrink: 0;
   border-radius: 50%;
   border: none;
@@ -183,8 +233,8 @@ button {
 }
 
 .cart-btn svg {
-  width: 20px;
-  height: 20px;
+  width: 16px;
+  height: 16px;
 }
 
 .cart-btn:hover {
@@ -241,14 +291,17 @@ button {
 }
 
 .see-all {
+  display: inline-block;
   font-size: 1rem;
   font-weight: 700;
   text-decoration: underline;
   text-underline-offset: 3px;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .see-all:hover {
   color: var(--orange);
+  transform: scale(1.06);
 }
 
 .products-grid {
@@ -269,6 +322,7 @@ button {
 .product-image {
   position: relative;
   height: 170px;
+  flex-shrink: 0;
   background: url("../images/background image scarpe.webp") center / cover no-repeat;
   display: flex;
   align-items: flex-end;
@@ -294,6 +348,7 @@ button {
 }
 
 .product-info {
+  flex: 1;
   padding: 14px 16px 16px;
   display: flex;
   flex-direction: column;
@@ -320,6 +375,7 @@ button {
 }
 
 .product-desc {
+  flex: 1;
   font-size: 0.8rem;
   color: var(--text-muted);
 }
@@ -409,12 +465,16 @@ button {
 
 .footer-col a {
   display: block;
+  width: fit-content;
   font-size: 0.9rem;
   font-weight: 500;
   padding: 5px 0;
+  transform-origin: left center;
+  transition: transform 0.15s ease, color 0.15s ease;
 }
 
 .footer-col a:hover {
+  transform: scale(1.06);
   color: var(--orange);
 }
 
@@ -546,8 +606,14 @@ button {
   margin: 8px auto 24px;
 }
 
+.breadcrumb a {
+  display: inline-block;
+  transition: transform 0.15s ease, color 0.15s ease;
+}
+
 .breadcrumb a:hover {
   color: var(--orange);
+  transform: scale(1.06);
 }
 
 /* Product detail */
