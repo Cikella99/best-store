@@ -127,14 +127,12 @@ button {
   z-index: 50;
   opacity: 0;
   visibility: hidden;
-  pointer-events: none;
   transition: opacity 0.15s ease, visibility 0s linear 0.35s;
 }
 
 .nav-item:hover .mega-panel {
   opacity: 1;
   visibility: visible;
-  pointer-events: auto;
   transition: opacity 0.15s ease, visibility 0s linear 0s;
 }
 
