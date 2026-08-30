@@ -314,6 +314,10 @@ button {
   justify-content: center;
 }
 
+.cart-count[hidden] {
+  display: none;
+}
+
 .account-btn,
 .wishlist-header-btn {
   position: relative;
@@ -359,7 +363,7 @@ button {
   justify-content: center;
   text-align: center;
   padding: 24px;
-  background: url("../images/Hero image - 2.webp") center / cover no-repeat;
+  background: url("../images/Hero Image - 3.webp") center / cover no-repeat;
 }
 
 .hero-inner h1 {
@@ -809,47 +813,6 @@ button {
 }
 
 /* Catalog / shop */
-
-.catalog-hero {
-  margin: 8px auto 32px;
-}
-
-.catalog-hero-inner {
-  position: relative;
-  border: 3px solid var(--orange);
-  border-radius: var(--border-radius-lg);
-  overflow: hidden;
-  min-height: 180px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 24px;
-  background: url("../images/hero image.webp") center / cover no-repeat;
-}
-
-.catalog-hero-inner::after {
-  content: "";
-  position: absolute;
-  inset: 0;
-}
-
-.catalog-hero-inner.tint-blue::after {
-  background: rgba(37, 99, 235, 0.45);
-}
-
-.catalog-hero-inner.tint-pink::after {
-  background: rgba(236, 72, 153, 0.45);
-}
-
-.catalog-hero-inner h1 {
-  position: relative;
-  z-index: 1;
-  color: #ffffff;
-  font-weight: 700;
-  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
-  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
-}
 
 .catalog {
   margin-bottom: 56px;
@@ -1955,6 +1918,10 @@ button {
   font-size: 0.8rem;
   font-weight: 600;
   color: var(--text-muted);
+}
+
+.admin-form label[hidden] {
+  display: none;
 }
 
 .admin-form input,

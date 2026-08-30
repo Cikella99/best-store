@@ -295,28 +295,20 @@ function initCatalogPage() {
   const params = new URLSearchParams(window.location.search);
   const cat = params.get("cat");
   const typeParam = params.get("type");
+  const subParam = params.get("sub");
   const catTitles = { men: "Uomo", woman: "Donna", sales: "Saldi" };
   const typeTitles = { shoes: "Scarpe", clothing: "Abbigliamento", accessories: "Accessori" };
   const pageTitle = catTitles[cat] || typeTitles[typeParam] || "Shop";
   document.title = `${pageTitle} — Best Store`;
 
-  const heroSection = document.getElementById("catalog-hero");
-  const heroInner = document.getElementById("catalog-hero-inner");
-  const heroTitle = document.getElementById("catalog-hero-title");
-  const header = document.getElementById("catalog-header");
-  const plainTitle = document.getElementById("catalog-title");
+  document.getElementById("catalog-title").textContent = pageTitle;
 
-  if (cat === "men" || cat === "woman") {
-    heroSection.hidden = false;
-    heroInner.classList.add(cat === "men" ? "tint-blue" : "tint-pink");
-    heroTitle.textContent = pageTitle;
-    header.hidden = true;
-  } else if (typeTitles[typeParam]) {
-    heroSection.hidden = false;
-    heroTitle.textContent = pageTitle;
-    header.hidden = true;
+  const breadcrumbWrap = document.getElementById("breadcrumb-current-wrap");
+  if (pageTitle === "Shop") {
+    breadcrumbWrap.hidden = true;
   } else {
-    plainTitle.textContent = pageTitle;
+    breadcrumbWrap.hidden = false;
+    document.getElementById("breadcrumb-current").textContent = pageTitle;
   }
 
   const categoriaFilter = document.getElementById("filter-categoria");
@@ -365,10 +357,11 @@ function initCatalogPage() {
   function renderGrid() {
     let items = products.filter((p) => {
       const categoryOk = !typeParam || p.category === typeParam;
+      const subOk = !subParam || p.subcategory === subParam;
       const genderOk = !(cat === "men" || cat === "woman") || p.gender === cat || p.gender === "unisex";
       const brandOk = selectedBrands.length === 0 || selectedBrands.includes(p.brand);
       const priceOk = p.price >= priceLow && p.price <= priceHigh;
-      return categoryOk && genderOk && brandOk && priceOk;
+      return categoryOk && subOk && genderOk && brandOk && priceOk;
     });
     if (currentSort === "default") items.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
     if (currentSort === "price-asc") items.sort((a, b) => a.price - b.price);

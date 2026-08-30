@@ -16,6 +16,20 @@ function adminImgSrc(path) {
 const CATEGORY_LABELS = { shoes: "Scarpe", clothing: "Abbigliamento", accessories: "Accessori" };
 const GENDER_LABELS = { men: "Uomo", woman: "Donna", unisex: "Unisex" };
 
+const SUBCATEGORY_OPTIONS = {
+  clothing: [
+    { value: "tshirts", label: "T-shirts" },
+    { value: "pants", label: "Pants" },
+    { value: "felpe", label: "Felpe" },
+    { value: "giacche", label: "Giacche" }
+  ],
+  accessories: [
+    { value: "cappelli", label: "Cappelli" },
+    { value: "calzini", label: "Calzini" },
+    { value: "borse", label: "Borse" }
+  ]
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.getElementById("admin-table-body");
   const emptyState = document.getElementById("admin-empty");
@@ -29,6 +43,8 @@ document.addEventListener("DOMContentLoaded", () => {
   const modelField = document.getElementById("product-model");
   const categoryField = document.getElementById("product-category");
   const genderField = document.getElementById("product-gender");
+  const subcategoryField = document.getElementById("product-subcategory");
+  const subcategoryRow = document.getElementById("subcategory-row");
   const priceField = document.getElementById("product-price");
   const oldPriceField = document.getElementById("product-oldprice");
   const descField = document.getElementById("product-desc");
@@ -77,6 +93,20 @@ document.addEventListener("DOMContentLoaded", () => {
       .join("");
   }
 
+  function updateSubcategoryOptions(category, selectedValue) {
+    const options = SUBCATEGORY_OPTIONS[category] || [];
+    if (!options.length) {
+      subcategoryRow.hidden = true;
+      subcategoryField.innerHTML = "";
+      return;
+    }
+    subcategoryRow.hidden = false;
+    subcategoryField.innerHTML = options.map((o) => `<option value="${o.value}">${o.label}</option>`).join("");
+    if (selectedValue) subcategoryField.value = selectedValue;
+  }
+
+  categoryField.addEventListener("change", () => updateSubcategoryOptions(categoryField.value));
+
   function openModal(product) {
     form.reset();
     imagePreview.hidden = true;
@@ -90,6 +120,7 @@ document.addEventListener("DOMContentLoaded", () => {
       modelField.value = product.model;
       categoryField.value = product.category || "shoes";
       genderField.value = product.gender || "unisex";
+      updateSubcategoryOptions(categoryField.value, product.subcategory);
       priceField.value = product.price;
       oldPriceField.value = product.oldPrice || "";
       descField.value = product.desc || "";
@@ -102,6 +133,7 @@ document.addEventListener("DOMContentLoaded", () => {
       idField.value = "";
       categoryField.value = "shoes";
       genderField.value = "unisex";
+      updateSubcategoryOptions("shoes");
     }
 
     modalBackdrop.hidden = false;
@@ -165,6 +197,7 @@ document.addEventListener("DOMContentLoaded", () => {
       model: modelField.value.trim(),
       category: categoryField.value,
       gender: genderField.value,
+      subcategory: subcategoryRow.hidden ? "" : subcategoryField.value,
       price: Number(priceField.value),
       desc: descField.value.trim(),
       image: currentImage || "images/logo.jpeg"
