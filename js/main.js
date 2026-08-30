@@ -495,6 +495,23 @@ function initLoginPage() {
   });
 }
 
+function sizeHeroToViewport() {
+  const heroInner = document.querySelector(".hero-inner");
+  if (!heroInner) return;
+
+  const announcement = document.querySelector(".announcement-bar");
+  const header = document.querySelector(".site-header");
+  const trustStrip = document.getElementById("below-hero");
+
+  const used =
+    (announcement ? announcement.offsetHeight : 0) +
+    (header ? header.offsetHeight : 0) +
+    (trustStrip ? trustStrip.offsetHeight : 0) +
+    32;
+
+  heroInner.style.minHeight = `calc(100vh - ${used}px)`;
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderPopularGrid();
   renderProductDetail();
@@ -505,4 +522,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setActiveNav();
   updateCartBadge();
   updateWishlistBadge();
+  sizeHeroToViewport();
 });
+
+window.addEventListener("load", sizeHeroToViewport);
+window.addEventListener("resize", sizeHeroToViewport);
