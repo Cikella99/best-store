@@ -49,7 +49,71 @@ function renderProductDetail() {
   document.getElementById("related-grid").innerHTML = related.map(productCardHTML).join("");
 }
 
+function initCatalogPage() {
+  const grid = document.getElementById("catalog-grid");
+  if (!grid) return;
+
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get("cat");
+  const titles = { men: "Uomo", woman: "Donna", sales: "Saldi" };
+  const pageTitle = titles[cat] || "Shop";
+  document.title = `${pageTitle} — Best Store`;
+
+  const heroSection = document.getElementById("catalog-hero");
+  const heroInner = document.getElementById("catalog-hero-inner");
+  const heroTitle = document.getElementById("catalog-hero-title");
+  const header = document.getElementById("catalog-header");
+  const plainTitle = document.getElementById("catalog-title");
+
+  if (cat === "men" || cat === "woman") {
+    heroSection.hidden = false;
+    heroInner.classList.add(cat === "men" ? "tint-blue" : "tint-pink");
+    heroTitle.textContent = pageTitle;
+    header.hidden = true;
+  } else {
+    plainTitle.textContent = pageTitle;
+  }
+
+  const brands = [...new Set(PRODUCTS.map((p) => p.brand))];
+  const chipsWrap = document.getElementById("filter-chips");
+  chipsWrap.innerHTML = ["Tutti", ...brands]
+    .map(
+      (b, i) =>
+        `<button type="button" class="chip${i === 0 ? " active" : ""}" data-brand="${i === 0 ? "" : b}">${b}</button>`
+    )
+    .join("");
+
+  let currentBrand = "";
+  let currentSort = "default";
+
+  function renderGrid() {
+    let items = currentBrand ? PRODUCTS.filter((p) => p.brand === currentBrand) : PRODUCTS.slice();
+    if (currentSort === "price-asc") items.sort((a, b) => a.price - b.price);
+    if (currentSort === "price-desc") items.sort((a, b) => b.price - a.price);
+    grid.innerHTML = items.length
+      ? items.map(productCardHTML).join("")
+      : '<p class="empty-state">Nessun prodotto trovato.</p>';
+  }
+
+  chipsWrap.addEventListener("click", (e) => {
+    const btn = e.target.closest(".chip");
+    if (!btn) return;
+    chipsWrap.querySelectorAll(".chip").forEach((c) => c.classList.remove("active"));
+    btn.classList.add("active");
+    currentBrand = btn.dataset.brand;
+    renderGrid();
+  });
+
+  document.getElementById("sort-select").addEventListener("change", (e) => {
+    currentSort = e.target.value;
+    renderGrid();
+  });
+
+  renderGrid();
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderPopularGrid();
   renderProductDetail();
+  initCatalogPage();
 });

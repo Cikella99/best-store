@@ -131,6 +131,17 @@ button {
   display: grid;
 }
 
+/* invisible bridge so moving the cursor from the link into the panel
+   doesn't cross a dead zone and close the menu */
+.mega-panel::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: 0;
+  right: 0;
+  height: 20px;
+}
+
 .mega-col h4 {
   font-size: 0.72rem;
   text-transform: uppercase;
@@ -157,12 +168,13 @@ button {
   height: 44px;
   flex-shrink: 0;
   border-radius: 50%;
-  border: 2px solid var(--orange);
+  border: none;
+  background: var(--orange);
   display: flex;
   align-items: center;
   justify-content: center;
-  color: var(--orange);
-  transition: background 0.2s ease, color 0.2s ease;
+  color: #ffffff;
+  transition: background 0.2s ease;
 }
 
 .cart-btn svg {
@@ -171,8 +183,7 @@ button {
 }
 
 .cart-btn:hover {
-  background: var(--orange);
-  color: #ffffff;
+  background: var(--orange-dark);
 }
 
 /* Hero */
@@ -409,6 +420,117 @@ button {
   padding: 20px 8px 0;
   font-size: 0.78rem;
   color: var(--text-muted);
+}
+
+/* Catalog / shop */
+
+.catalog-hero {
+  margin: 8px auto 32px;
+}
+
+.catalog-hero-inner {
+  position: relative;
+  border: 3px solid var(--orange);
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  min-height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 24px;
+  background: url("../images/hero image.webp") center / cover no-repeat;
+}
+
+.catalog-hero-inner::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+}
+
+.catalog-hero-inner.tint-blue::after {
+  background: rgba(37, 99, 235, 0.45);
+}
+
+.catalog-hero-inner.tint-pink::after {
+  background: rgba(236, 72, 153, 0.45);
+}
+
+.catalog-hero-inner h1 {
+  position: relative;
+  z-index: 1;
+  color: #ffffff;
+  font-weight: 700;
+  font-size: clamp(1.3rem, 2.6vw, 1.9rem);
+  text-shadow: 0 2px 12px rgba(0, 0, 0, 0.35);
+}
+
+.catalog {
+  margin-bottom: 56px;
+}
+
+.catalog-header {
+  margin: 8px auto 20px;
+}
+
+.catalog-title {
+  font-size: 1.6rem;
+  font-weight: 700;
+}
+
+.catalog-filters {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.filter-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.chip {
+  padding: 8px 18px;
+  border-radius: var(--border-radius-pill);
+  border: 2px solid #e0e0e0;
+  background: #ffffff;
+  font-weight: 600;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: border-color 0.2s ease, color 0.2s ease, background 0.2s ease;
+}
+
+.chip:hover {
+  border-color: var(--orange);
+  color: var(--orange);
+}
+
+.chip.active {
+  border-color: var(--orange);
+  color: var(--orange);
+  background: rgba(242, 84, 29, 0.08);
+}
+
+.sort-select {
+  padding: 10px 16px;
+  border-radius: var(--border-radius-pill);
+  border: 2px solid #e0e0e0;
+  font-family: inherit;
+  font-weight: 600;
+  font-size: 0.85rem;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  text-align: center;
+  color: var(--text-muted);
+  padding: 48px 0;
 }
 
 /* Breadcrumb */

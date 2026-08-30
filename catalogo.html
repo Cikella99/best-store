@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Shop — Best Store</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="index.html" class="logo">
+        <img src="images/logo.jpeg" alt="Best Store">
+      </a>
+      <nav class="main-nav">
+        <a href="index.html">menu</a>
+        <a href="catalogo.html" class="active">shop</a>
+
+        <div class="nav-item">
+          <a href="catalogo.html?cat=men">men</a>
+          <div class="mega-panel">
+            <div class="mega-col">
+              <h4>Shoes</h4>
+              <a href="catalogo.html?cat=men&type=shoes">Tutte le sneaker</a>
+              <a href="catalogo.html?cat=men&type=shoes&sub=novita">Novità</a>
+              <a href="catalogo.html?cat=men&type=shoes&sub=saldi">Saldi</a>
+            </div>
+            <div class="mega-col">
+              <h4>Clothing</h4>
+              <a href="catalogo.html?cat=men&type=clothing&sub=tshirts">T-shirts</a>
+              <a href="catalogo.html?cat=men&type=clothing&sub=pants">Pants</a>
+              <a href="catalogo.html?cat=men&type=clothing&sub=felpe">Felpe</a>
+              <a href="catalogo.html?cat=men&type=clothing&sub=giacche">Giacche</a>
+            </div>
+            <div class="mega-col">
+              <h4>Accessories</h4>
+              <a href="catalogo.html?cat=men&type=accessories&sub=cappelli">Cappelli</a>
+              <a href="catalogo.html?cat=men&type=accessories&sub=calzini">Calzini</a>
+              <a href="catalogo.html?cat=men&type=accessories&sub=borse">Borse</a>
+            </div>
+          </div>
+        </div>
+
+        <div class="nav-item">
+          <a href="catalogo.html?cat=woman">woman</a>
+          <div class="mega-panel">
+            <div class="mega-col">
+              <h4>Shoes</h4>
+              <a href="catalogo.html?cat=woman&type=shoes">Tutte le sneaker</a>
+              <a href="catalogo.html?cat=woman&type=shoes&sub=novita">Novità</a>
+              <a href="catalogo.html?cat=woman&type=shoes&sub=saldi">Saldi</a>
+            </div>
+            <div class="mega-col">
+              <h4>Clothing</h4>
+              <a href="catalogo.html?cat=woman&type=clothing&sub=tshirts">T-shirts</a>
+              <a href="catalogo.html?cat=woman&type=clothing&sub=pants">Pants</a>
+              <a href="catalogo.html?cat=woman&type=clothing&sub=felpe">Felpe</a>
+              <a href="catalogo.html?cat=woman&type=clothing&sub=giacche">Giacche</a>
+            </div>
+            <div class="mega-col">
+              <h4>Accessories</h4>
+              <a href="catalogo.html?cat=woman&type=accessories&sub=cappelli">Cappelli</a>
+              <a href="catalogo.html?cat=woman&type=accessories&sub=calzini">Calzini</a>
+              <a href="catalogo.html?cat=woman&type=accessories&sub=borse">Borse</a>
+            </div>
+          </div>
+        </div>
+
+        <a href="catalogo.html?cat=sales">sales</a>
+      </nav>
+      <a href="carrello.html" class="cart-btn" aria-label="Carrello">
+        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M3 3H5L5.4 5M7 13H17L21 5H5.4M7 13L5.4 5M7 13L4.7 15.3C4.1 15.9 4.5 17 5.4 17H17M17 17C15.9 17 15 17.9 15 19C15 20.1 15.9 21 17 21C18.1 21 19 20.1 19 19C19 17.9 18.1 17 17 17ZM9 19C9 20.1 8.1 21 7 21C5.9 21 5 20.1 5 19C5 17.9 5.9 17 7 17C8.1 17 9 17.9 9 19Z" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <section class="catalog-hero container" id="catalog-hero" hidden>
+      <div class="catalog-hero-inner" id="catalog-hero-inner">
+        <h1 id="catalog-hero-title"></h1>
+      </div>
+    </section>
+
+    <section class="catalog container">
+      <div class="catalog-header" id="catalog-header">
+        <h1 class="catalog-title" id="catalog-title">Shop</h1>
+      </div>
+
+      <div class="catalog-filters">
+        <div class="filter-chips" id="filter-chips"></div>
+        <select id="sort-select" class="sort-select">
+          <option value="default">In evidenza</option>
+          <option value="price-asc">Prezzo: crescente</option>
+          <option value="price-desc">Prezzo: decrescente</option>
+        </select>
+      </div>
+
+      <div class="products-grid" id="catalog-grid"></div>
+    </section>
+  </main>
+
+  <footer class="site-footer container">
+    <div class="footer-top">
+      <div class="footer-brand">
+        <img src="images/logo.jpeg" alt="Best Store" class="footer-logo">
+        <p>Sneaker e streetwear custom, pensati per chi non si accontenta del solito.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Shop</h4>
+        <a href="catalogo.html?cat=men">Uomo</a>
+        <a href="catalogo.html?cat=woman">Donna</a>
+        <a href="catalogo.html?cat=sales">Saldi</a>
+        <a href="catalogo.html">Novità</a>
+      </div>
+      <div class="footer-col">
+        <h4>Assistenza</h4>
+        <a href="#">Contatti</a>
+        <a href="#">Spedizioni e resi</a>
+        <a href="#">FAQ</a>
+        <a href="#">Termini e condizioni</a>
+      </div>
+      <div class="footer-col">
+        <h4>Seguici</h4>
+        <a href="#">Instagram</a>
+        <a href="#">TikTok</a>
+        <a href="#">Facebook</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>&copy; 2026 Best Store. Tutti i diritti riservati.</p>
+      <p>P.IVA 00000000000</p>
+    </div>
+  </footer>
+
+  <script src="js/products-data.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>
