@@ -516,6 +516,9 @@ document.addEventListener("DOMContentLoaded", () => {
   function orderRowHTML(order) {
     const date = new Date(order.createdAt).toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric" });
     const itemsSummary = order.items.map((it) => `${it.qty}× ${it.model}`).join(", ");
+    const thumbs = order.items
+      .map((it) => `<img class="admin-thumb admin-thumb-sm" src="${adminImgSrc(it.image)}" alt="${it.brand} ${it.model}">`)
+      .join("");
     const statusOptions = Object.entries(ORDER_STATUS_LABELS)
       .map(([value, label]) => `<option value="${value}" ${order.status === value ? "selected" : ""}>${label}</option>`)
       .join("");
@@ -523,7 +526,12 @@ document.addEventListener("DOMContentLoaded", () => {
       <tr data-id="${order.id}">
         <td>${order.id}</td>
         <td>${date}</td>
-        <td>${itemsSummary}</td>
+        <td>
+          <div class="order-products-cell">
+            <div class="order-products-thumbs">${thumbs}</div>
+            <span>${itemsSummary}</span>
+          </div>
+        </td>
         <td>€${order.total}</td>
         <td>
           <select class="disposizione-sort order-status-select" data-id="${order.id}">${statusOptions}</select>

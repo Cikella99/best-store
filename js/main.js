@@ -1,21 +1,9 @@
-// Each photo in a product's gallery has a matching background: the 1st photo
-// uses the site's default background (set in CSS), the 2nd/3rd/4th swap in
-// the corresponding "angolazione" image. Wraps around for longer galleries.
-const PRODUCT_IMAGE_BACKGROUNDS = [
-  "images/background image scarpe.webp",
-  "images/angolazione 2.webp",
-  "images/angolazione 3.webp",
-  "images/angolazione 4.webp"
-];
-
+// Only the 2nd photo in a product's gallery swaps to its own background
+// ("angolazione 2"); every other photo keeps the site's default background
+// (set in CSS).
 function applyImageBackground(el, index) {
   if (!el) return;
-  if (index === 0) {
-    el.style.backgroundImage = "";
-  } else {
-    const bg = PRODUCT_IMAGE_BACKGROUNDS[index % PRODUCT_IMAGE_BACKGROUNDS.length];
-    el.style.backgroundImage = `url("${bg}")`;
-  }
+  el.style.backgroundImage = index === 1 ? `url("images/angolazione 2.webp")` : "";
 }
 
 const CART_KEY = "bestStoreCart";
@@ -135,7 +123,10 @@ function productCardHTML(p) {
         </a>
         ${
           images.length > 1
-            ? `<button type="button" class="product-image-next" aria-label="Foto successiva">
+            ? `<button type="button" class="product-image-prev" hidden aria-label="Foto precedente">
+                 <svg viewBox="0 0 24 24" fill="none"><path d="M15 6l-6 6 6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+               </button>
+               <button type="button" class="product-image-next" aria-label="Foto successiva">
                  <svg viewBox="0 0 24 24" fill="none"><path d="M9 6l6 6-6 6" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
                </button>
                <div class="product-image-dots">${images.map((_, i) => `<span class="product-image-dot${i === 0 ? " active" : ""}"></span>`).join("")}</div>`
@@ -564,22 +555,26 @@ function cycleCardImage(wrap, direction) {
   if (!product) return;
   const images = productImages(product);
   if (images.length < 2) return;
-  const next = (Number(wrap.dataset.index || 0) + direction + images.length) % images.length;
+  const next = Math.max(0, Math.min(images.length - 1, Number(wrap.dataset.index || 0) + direction));
   wrap.dataset.index = next;
   const img = wrap.querySelector(".product-image img");
   if (img) img.src = images[next];
   applyImageBackground(wrap.querySelector(".product-image"), next);
   wrap.querySelectorAll(".product-image-dot").forEach((d, i) => d.classList.toggle("active", i === next));
+  const prevBtn = wrap.querySelector(".product-image-prev");
+  const nextBtn = wrap.querySelector(".product-image-next");
+  if (prevBtn) prevBtn.hidden = next === 0;
+  if (nextBtn) nextBtn.hidden = next === images.length - 1;
 }
 
 document.addEventListener("click", (e) => {
-  const btn = e.target.closest(".product-image-next");
+  const btn = e.target.closest(".product-image-next, .product-image-prev");
   if (!btn) return;
   const wrap = btn.closest(".product-image-wrap");
   if (!wrap) return;
   e.preventDefault();
   e.stopPropagation();
-  cycleCardImage(wrap, 1);
+  cycleCardImage(wrap, btn.classList.contains("product-image-prev") ? -1 : 1);
 });
 
 let cardTouchStartX = 0;
