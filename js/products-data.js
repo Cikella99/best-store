@@ -20,7 +20,7 @@ const PRODUCTS = [
     brand: "Jordan",
     model: "4 Retro Red Thunder",
     price: 259,
-    oldPrice: 299,
+    oldPrice: 324,
     image: "images/shoes/scarpe-07.webp",
     desc: "Nabuk rosso acceso, dettagli a rete e suola bianca a contrasto: la Jordan 4 che non passa mai inosservata."
   },
@@ -45,7 +45,7 @@ const PRODUCTS = [
     brand: "Onitsuka Tiger",
     model: "Mexico 66",
     price: 119,
-    oldPrice: 139,
+    oldPrice: 132,
     image: "images/shoes/scarpe-10.webp",
     desc: "Tomaia gialla e strisce nere a contrasto: il design giapponese che ha fatto la storia dello sport, sempre attuale."
   },
@@ -62,7 +62,7 @@ const PRODUCTS = [
     brand: "Asics",
     model: "Gel-1130",
     price: 149,
-    oldPrice: 179,
+    oldPrice: 213,
     image: "images/shoes/scarpe-12.webp",
     desc: "Mesh nero e overlay bianchi a contrasto: il runner Asics che unisce prestazioni tecniche e stile street."
   }

@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Carrello — Best Store</title>
+  <title>Accedi — Best Store</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
@@ -113,9 +113,37 @@
   </header>
 
   <main>
-    <section class="cart-page container">
-      <h1 class="catalog-title">Il tuo carrello</h1>
-      <div id="cart-content"></div>
+    <section class="login-page container">
+      <div class="login-box">
+        <h1>Accedi o registrati</h1>
+        <p class="login-sub">Niente password: ti mandiamo un codice usa e getta su WhatsApp.</p>
+
+        <form id="phone-step" class="login-form">
+          <label>Nome
+            <input type="text" id="login-name" required placeholder="Il tuo nome">
+          </label>
+          <label>Numero di telefono
+            <input type="tel" id="login-phone" required placeholder="+39 333 1234567">
+          </label>
+          <button type="submit" class="btn btn-primary btn-large">Invia codice su WhatsApp</button>
+        </form>
+
+        <form id="code-step" class="login-form" hidden>
+          <p class="login-sent-to">Codice inviato a <strong id="sent-phone"></strong></p>
+          <label>Codice di verifica
+            <input type="text" id="login-code" inputmode="numeric" maxlength="6" required placeholder="123456">
+          </label>
+          <p class="login-hint">Demo: usa il codice <strong>123456</strong> — l'invio reale via WhatsApp arriverà con il backend.</p>
+          <button type="submit" class="btn btn-primary btn-large">Verifica e accedi</button>
+          <button type="button" class="link-btn" id="back-to-phone">Cambia numero</button>
+        </form>
+
+        <div id="success-step" class="login-success" hidden>
+          <h2>Bentornato, <span id="success-name"></span>!</h2>
+          <p>Sei entrato nella tua area personale.</p>
+          <a href="index.html" class="btn btn-primary">Torna allo shop</a>
+        </div>
+      </div>
     </section>
   </main>
 

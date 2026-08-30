@@ -53,14 +53,39 @@ function discountPercent(p) {
   return Math.round((1 - p.price / p.oldPrice) * 100);
 }
 
+const WISHLIST_KEY = "bestStoreWishlist";
+
+function getWishlist() {
+  try {
+    return JSON.parse(localStorage.getItem(WISHLIST_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function toggleWishlist(id) {
+  const list = getWishlist();
+  const idx = list.indexOf(id);
+  if (idx === -1) {
+    list.push(id);
+  } else {
+    list.splice(idx, 1);
+  }
+  localStorage.setItem(WISHLIST_KEY, JSON.stringify(list));
+}
+
 function productCardHTML(p) {
   const discount = discountPercent(p);
+  const isFav = getWishlist().includes(p.id);
   return `
     <article class="product-card">
       <a class="product-image" href="prodotto.html?id=${p.id}">
         ${discount ? `<span class="badge">-${discount}%</span>` : ""}
         <img src="${p.image}" alt="${p.brand} ${p.model}" loading="lazy">
       </a>
+      <button type="button" class="wishlist-btn${isFav ? " active" : ""}" data-id="${p.id}" aria-label="Aggiungi ai preferiti">
+        <svg viewBox="0 0 24 24" fill="none"><path d="M12 20.2s-7.2-4.4-9.7-8.8C1 8 2.6 4.3 6.2 4.3c2.1 0 3.7 1.2 5.8 3.4 2.1-2.2 3.7-3.4 5.8-3.4 3.6 0 5.2 3.7 3.9 7.1-2.5 4.4-9.7 8.8-9.7 8.8z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/></svg>
+      </button>
       <div class="product-info">
         <div class="product-title">
           <h3>${p.model}</h3>
@@ -339,15 +364,60 @@ function setActiveNav() {
     } else if (cat === "sales") {
       document.querySelector('.main-nav > a[href*="cat=sales"]')?.classList.add("active");
     } else {
-      document.querySelector('.main-nav > a[href="catalogo.html"]')?.classList.add("active");
+      document.querySelector('.nav-item > a[href="catalogo.html"]')?.classList.add("active");
     }
   } else if (path === "prodotto.html") {
-    document.querySelector('.main-nav > a[href="catalogo.html"]')?.classList.add("active");
-  } else if (path === "carrello.html") {
-    // no top-level nav item corresponds to the cart
+    document.querySelector('.nav-item > a[href="catalogo.html"]')?.classList.add("active");
+  } else if (path === "carrello.html" || path === "login.html") {
+    // no top-level nav item corresponds to these pages
   } else {
     document.querySelector('.main-nav > a[href="index.html"]')?.classList.add("active");
   }
+}
+
+document.addEventListener("click", (e) => {
+  const btn = e.target.closest(".wishlist-btn");
+  if (!btn) return;
+  e.preventDefault();
+  toggleWishlist(btn.dataset.id);
+  btn.classList.toggle("active");
+});
+
+function initLoginPage() {
+  const phoneStep = document.getElementById("phone-step");
+  if (!phoneStep) return;
+
+  const codeStep = document.getElementById("code-step");
+  const successStep = document.getElementById("success-step");
+  const sentPhone = document.getElementById("sent-phone");
+  const successName = document.getElementById("success-name");
+
+  let enteredName = "";
+
+  phoneStep.addEventListener("submit", (e) => {
+    e.preventDefault();
+    enteredName = document.getElementById("login-name").value.trim();
+    sentPhone.textContent = document.getElementById("login-phone").value.trim();
+    phoneStep.hidden = true;
+    codeStep.hidden = false;
+  });
+
+  document.getElementById("back-to-phone").addEventListener("click", () => {
+    codeStep.hidden = true;
+    phoneStep.hidden = false;
+  });
+
+  codeStep.addEventListener("submit", (e) => {
+    e.preventDefault();
+    const code = document.getElementById("login-code").value.trim();
+    if (code !== "123456") {
+      alert("Codice non valido. In questa demo usa 123456.");
+      return;
+    }
+    codeStep.hidden = true;
+    successStep.hidden = false;
+    successName.textContent = enteredName || "utente";
+  });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -355,6 +425,7 @@ document.addEventListener("DOMContentLoaded", () => {
   renderProductDetail();
   initCatalogPage();
   renderCartPage();
+  initLoginPage();
   setActiveNav();
   updateCartBadge();
 });
