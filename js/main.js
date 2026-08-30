@@ -112,8 +112,31 @@ function initCatalogPage() {
   renderGrid();
 }
 
+function setActiveNav() {
+  const path = window.location.pathname.split("/").pop() || "index.html";
+  const params = new URLSearchParams(window.location.search);
+  const cat = params.get("cat");
+
+  document.querySelectorAll(".main-nav a").forEach((a) => a.classList.remove("active"));
+
+  if (path === "catalogo.html") {
+    if (cat === "men" || cat === "woman") {
+      document.querySelector(`.nav-item > a[href*="cat=${cat}"]`)?.classList.add("active");
+    } else if (cat === "sales") {
+      document.querySelector('.main-nav > a[href*="cat=sales"]')?.classList.add("active");
+    } else {
+      document.querySelector('.main-nav > a[href="catalogo.html"]')?.classList.add("active");
+    }
+  } else if (path === "prodotto.html") {
+    document.querySelector('.main-nav > a[href="catalogo.html"]')?.classList.add("active");
+  } else {
+    document.querySelector('.main-nav > a[href="index.html"]')?.classList.add("active");
+  }
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   renderPopularGrid();
   renderProductDetail();
   initCatalogPage();
+  setActiveNav();
 });

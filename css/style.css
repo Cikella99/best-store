@@ -100,7 +100,7 @@ button {
   color: var(--text);
 }
 
-.main-nav > a.active {
+.main-nav a.active {
   text-decoration: underline;
   text-underline-offset: 4px;
   font-weight: 600;
@@ -113,7 +113,7 @@ button {
 /* Mega menu */
 
 .mega-panel {
-  display: none;
+  display: grid;
   position: absolute;
   top: calc(100% + 20px);
   left: 0;
@@ -125,10 +125,17 @@ button {
   gap: 24px;
   grid-template-columns: repeat(3, 1fr);
   z-index: 50;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+  transition: opacity 0.15s ease, visibility 0s linear 0.35s;
 }
 
 .nav-item:hover .mega-panel {
-  display: grid;
+  opacity: 1;
+  visibility: visible;
+  pointer-events: auto;
+  transition: opacity 0.15s ease, visibility 0s linear 0s;
 }
 
 /* invisible bridge so moving the cursor from the link into the panel
