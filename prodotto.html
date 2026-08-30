@@ -11,6 +11,8 @@
 </head>
 <body>
 
+  <div class="announcement-bar">Spedizione gratuita sopra i 150€ &middot; Spedizioni in tutta Italia</div>
+
   <header class="site-header">
     <div class="container header-inner">
       <a href="index.html" class="logo">
@@ -94,14 +96,17 @@
 
     <section class="product-detail container" id="product-detail">
       <div class="product-detail-image">
-        <span class="badge" id="detail-badge">On sale</span>
+        <span class="badge" id="detail-badge" hidden></span>
         <img id="detail-image" src="" alt="">
       </div>
 
       <div class="product-detail-info">
         <span class="tag" id="detail-brand"></span>
         <h1 id="detail-model"></h1>
-        <p class="price price-lg" id="detail-price"></p>
+        <p class="price-group">
+          <span class="price price-lg" id="detail-price"></span>
+          <span class="price-old" id="detail-price-old" hidden></span>
+        </p>
         <p class="detail-desc" id="detail-desc"></p>
 
         <div class="size-block">

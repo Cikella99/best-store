@@ -48,11 +48,17 @@ function updateCartBadge() {
   badge.hidden = count === 0;
 }
 
+function discountPercent(p) {
+  if (!p.oldPrice) return 0;
+  return Math.round((1 - p.price / p.oldPrice) * 100);
+}
+
 function productCardHTML(p) {
+  const discount = discountPercent(p);
   return `
     <article class="product-card">
       <a class="product-image" href="prodotto.html?id=${p.id}">
-        <span class="badge">${p.badge}</span>
+        ${discount ? `<span class="badge">-${discount}%</span>` : ""}
         <img src="${p.image}" alt="${p.brand} ${p.model}" loading="lazy">
       </a>
       <div class="product-info">
@@ -62,7 +68,10 @@ function productCardHTML(p) {
         </div>
         <p class="product-desc">${p.desc}</p>
         <div class="product-footer">
-          <span class="price">€${p.price}</span>
+          <span class="price-group">
+            <span class="price">€${p.price}</span>
+            ${discount ? `<span class="price-old">€${p.oldPrice}</span>` : ""}
+          </span>
           <a href="prodotto.html?id=${p.id}" class="btn btn-primary btn-small">view</a>
         </div>
       </div>
@@ -87,16 +96,35 @@ function renderProductDetail() {
 
   document.getElementById("detail-image").src = product.image;
   document.getElementById("detail-image").alt = `${product.brand} ${product.model}`;
-  document.getElementById("detail-badge").textContent = product.badge;
   document.getElementById("detail-brand").textContent = product.brand;
   document.getElementById("detail-model").textContent = product.model;
   document.getElementById("detail-price").textContent = `€${product.price}`;
   document.getElementById("detail-desc").textContent = product.desc;
+
+  const discount = discountPercent(product);
+  const badgeEl = document.getElementById("detail-badge");
+  const oldPriceEl = document.getElementById("detail-price-old");
+  if (discount) {
+    badgeEl.textContent = `-${discount}%`;
+    badgeEl.hidden = false;
+    oldPriceEl.textContent = `€${product.oldPrice}`;
+    oldPriceEl.hidden = false;
+  } else {
+    badgeEl.hidden = true;
+    oldPriceEl.hidden = true;
+  }
   const crumb = document.getElementById("detail-model-crumb");
   if (crumb) crumb.textContent = `${product.brand} ${product.model}`;
 
   const related = PRODUCTS.filter((p) => p.id !== product.id).slice(0, 4);
   document.getElementById("related-grid").innerHTML = related.map(productCardHTML).join("");
+
+  document.querySelectorAll(".size-pill").forEach((pill) => {
+    pill.addEventListener("click", () => {
+      document.querySelectorAll(".size-pill").forEach((p) => p.classList.remove("selected"));
+      pill.classList.add("selected");
+    });
+  });
 
   let qty = 1;
   const qtyValue = document.getElementById("detail-qty-value");

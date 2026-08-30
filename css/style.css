@@ -72,6 +72,16 @@ button {
 
 /* Header */
 
+.announcement-bar {
+  background: var(--orange);
+  color: #ffffff;
+  text-align: center;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  padding: 10px 16px;
+}
+
 .site-header {
   padding: 20px 0;
 }
@@ -408,6 +418,19 @@ button {
 
 .price {
   font-weight: 700;
+}
+
+.price-group {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+
+.price-old {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--text-muted);
+  text-decoration: line-through;
 }
 
 /* Newsletter */
@@ -966,7 +989,14 @@ button {
 
 .price-lg {
   font-size: 1.4rem;
+}
+
+.product-detail-info .price-group {
   margin-bottom: 16px;
+}
+
+.product-detail-info .price-old {
+  font-size: 1rem;
 }
 
 .detail-desc {
@@ -1009,6 +1039,12 @@ button {
 .size-pill:hover {
   border-color: var(--orange);
   color: var(--orange);
+}
+
+.size-pill.selected {
+  border-color: var(--orange);
+  background: var(--orange);
+  color: #ffffff;
 }
 
 .detail-actions {
