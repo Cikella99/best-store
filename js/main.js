@@ -299,6 +299,29 @@ function renderCartPage() {
         render();
       });
     });
+
+    root.querySelector(".checkout-btn")?.addEventListener("click", () => {
+      const items = cart
+        .map((item) => {
+          const p = products.find((prod) => prod.id === item.id);
+          return p ? { id: p.id, brand: p.brand, model: p.model, price: p.price, qty: item.qty, image: p.image } : null;
+        })
+        .filter(Boolean);
+      const order = {
+        id: "BS-" + Date.now().toString(36).toUpperCase(),
+        createdAt: new Date().toISOString(),
+        status: "received",
+        items,
+        total: items.reduce((sum, it) => sum + it.price * it.qty, 0)
+      };
+      saveOrders([...getOrders(), order]);
+      saveCart([]);
+      root.innerHTML = `
+        <div class="cart-empty">
+          <p>Grazie! Il tuo ordine <strong>${order.id}</strong> è stato ricevuto.</p>
+          <a href="catalogo.html" class="btn btn-primary">Continua lo shopping</a>
+        </div>`;
+    });
   }
 
   render();

@@ -36,6 +36,14 @@ const SUBCATEGORY_OPTIONS = {
   ]
 };
 
+const ORDER_STATUS_LABELS = {
+  received: "Ricevuto",
+  processing: "In lavorazione",
+  shipping: "In spedizione",
+  delivered: "Consegnato",
+  cancelled: "Annullato"
+};
+
 document.addEventListener("DOMContentLoaded", () => {
   const viewTable = document.getElementById("view-table");
   const tableBody = document.getElementById("admin-table-body");
@@ -43,7 +51,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const emptyState = document.getElementById("admin-empty");
   const countEl = document.getElementById("product-count");
   const searchInput = document.getElementById("product-search");
-  const sortSelect = document.getElementById("disposizione-sort");
 
   const modalBackdrop = document.getElementById("admin-modal-backdrop");
   const modalTitle = document.getElementById("admin-modal-title");
@@ -71,6 +78,22 @@ document.addEventListener("DOMContentLoaded", () => {
   let currentView = "grid";
   let activeFilter = "all";
 
+  /* ---------- Tabs: Prodotti / Ordini ---------- */
+
+  const tabProducts = document.getElementById("tab-products");
+  const tabOrders = document.getElementById("tab-orders");
+
+  document.querySelectorAll(".admin-tab").forEach((tab) => {
+    tab.addEventListener("click", () => {
+      document.querySelectorAll(".admin-tab").forEach((t) => t.classList.remove("active"));
+      tab.classList.add("active");
+      const isOrders = tab.dataset.tab === "orders";
+      tabProducts.hidden = isOrders;
+      tabOrders.hidden = !isOrders;
+      if (isOrders) renderOrders();
+    });
+  });
+
   /* ---------- View toggle ---------- */
 
   document.querySelectorAll(".view-btn").forEach((btn) => {
@@ -94,30 +117,22 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   searchInput.addEventListener("input", render);
-  sortSelect.addEventListener("change", () => {
-    if (sortSelect.value === "current") {
-      render();
-      return;
-    }
-    // Applying a sort re-arranges the current filtered set and saves it as the new order.
-    const filtered = getFilteredSorted();
-    const originalOrders = filtered.map((p) => p.order ?? 0).sort((a, b) => a - b);
-    filtered.forEach((p, i) => {
-      p.order = originalOrders[i];
-    });
-    saveProducts(products);
-    sortSelect.value = "current";
-    render();
-  });
 
-  function matchesFilter(p) {
-    if (activeFilter === "all") return true;
-    if (activeFilter === "sale") return !!p.oldPrice;
-    const [key, value] = activeFilter.split(":");
+  function matchesSingleFilter(filter, p) {
+    if (filter === "all") return true;
+    if (filter === "sale") return !!p.oldPrice;
+    const [key, value] = filter.split(":");
     if (key === "cat") return p.category === value;
     if (key === "gender") return p.gender === value || p.gender === "unisex";
     if (key === "sub") return p.subcategory === value;
     return true;
+  }
+
+  // Compound filters (e.g. "gender:men+sub:tshirts") require every "+"-joined
+  // condition to match, since subcategory pages on the storefront only exist
+  // nested under a gender.
+  function matchesFilter(p) {
+    return activeFilter.split("+").every((f) => matchesSingleFilter(f, p));
   }
 
   function matchesSearch(p) {
@@ -127,16 +142,7 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function getFilteredSorted() {
-    const filtered = products.filter((p) => matchesFilter(p) && matchesSearch(p));
-    const sortMode = sortSelect.value;
-    if (sortMode === "recent") {
-      filtered.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
-    } else if (sortMode === "oldest") {
-      filtered.sort((a, b) => new Date(a.createdAt || 0) - new Date(b.createdAt || 0));
-    } else {
-      filtered.sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
-    }
-    return filtered;
+    return products.filter((p) => matchesFilter(p) && matchesSearch(p)).sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
   }
 
   /* ---------- Rendering ---------- */
@@ -454,6 +460,48 @@ document.addEventListener("DOMContentLoaded", () => {
     render();
     closeModal();
   });
+
+  /* ---------- Ordini ---------- */
+
+  const ordersCountEl = document.getElementById("orders-count");
+  const ordersTableBody = document.getElementById("orders-table-body");
+  const ordersEmpty = document.getElementById("orders-empty");
+
+  function orderRowHTML(order) {
+    const date = new Date(order.createdAt).toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric" });
+    const itemsSummary = order.items.map((it) => `${it.qty}× ${it.model}`).join(", ");
+    const statusOptions = Object.entries(ORDER_STATUS_LABELS)
+      .map(([value, label]) => `<option value="${value}" ${order.status === value ? "selected" : ""}>${label}</option>`)
+      .join("");
+    return `
+      <tr data-id="${order.id}">
+        <td>${order.id}</td>
+        <td>${date}</td>
+        <td>${itemsSummary}</td>
+        <td>€${order.total}</td>
+        <td>
+          <select class="disposizione-sort order-status-select" data-id="${order.id}">${statusOptions}</select>
+        </td>
+      </tr>`;
+  }
+
+  function renderOrders() {
+    const orders = getOrders().slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    ordersCountEl.textContent = orders.length;
+    ordersEmpty.hidden = orders.length > 0;
+    ordersTableBody.innerHTML = orders.map(orderRowHTML).join("");
+
+    ordersTableBody.querySelectorAll(".order-status-select").forEach((select) => {
+      select.addEventListener("change", () => {
+        const list = getOrders();
+        const order = list.find((o) => o.id === select.dataset.id);
+        if (order) {
+          order.status = select.value;
+          saveOrders(list);
+        }
+      });
+    });
+  }
 
   render();
 });

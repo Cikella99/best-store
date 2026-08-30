@@ -714,6 +714,59 @@ button {
   }
 }
 
+/* Stores (home) */
+
+.stores {
+  margin-bottom: 56px;
+}
+
+.stores-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.store-card {
+  background: var(--orange);
+  border-radius: var(--border-radius-lg);
+  padding: 40px 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 14px;
+  transition: transform 0.15s ease, background 0.2s ease;
+}
+
+.store-card:hover {
+  background: var(--orange-dark);
+  transform: scale(1.015);
+}
+
+.store-card-city {
+  color: #ffffff;
+  font-size: 1.6rem;
+  font-weight: 800;
+}
+
+.store-card-pin {
+  width: 56px;
+  height: 56px;
+}
+
+.store-card-street {
+  color: #ffffff;
+  font-size: 0.85rem;
+  font-weight: 500;
+  opacity: 0.9;
+}
+
+@media (max-width: 900px) {
+  .stores-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Newsletter */
 
 .newsletter {
@@ -1422,6 +1475,141 @@ button {
   transform: scale(1.06);
 }
 
+/* Content pages (Contatti / Spedizioni / FAQ / Termini) */
+
+.content-page {
+  max-width: 760px;
+  margin-bottom: 48px;
+}
+
+.content-page h1 {
+  font-size: 1.8rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+}
+
+.content-page h2 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 28px 0 10px;
+}
+
+.content-page p {
+  color: var(--text-muted);
+  line-height: 1.7;
+  margin-bottom: 4px;
+}
+
+.content-page p a {
+  color: var(--orange);
+  font-weight: 600;
+  text-decoration: underline;
+}
+
+.content-lead {
+  font-size: 1rem;
+}
+
+.faq-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.faq-item {
+  border: 2px solid #eee;
+  border-radius: var(--border-radius-md);
+  padding: 16px 20px;
+}
+
+.faq-item summary {
+  cursor: pointer;
+  font-weight: 700;
+  font-size: 0.95rem;
+  list-style: none;
+}
+
+.faq-item summary::-webkit-details-marker {
+  display: none;
+}
+
+.faq-item summary::after {
+  content: "+";
+  float: right;
+  color: var(--orange);
+  font-weight: 800;
+  font-size: 1.1rem;
+}
+
+.faq-item[open] summary::after {
+  content: "\2212";
+}
+
+.faq-item p {
+  margin-top: 12px;
+}
+
+/* Contatti page — store cards with map */
+
+.stores-contact {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  margin-bottom: 48px;
+}
+
+.store-contact-card {
+  border: 2px solid #eee;
+  border-radius: var(--border-radius-lg);
+  padding: 24px;
+}
+
+.store-contact-card h2 {
+  font-size: 1.1rem;
+  font-weight: 800;
+  margin-bottom: 6px;
+}
+
+.store-contact-tag {
+  display: inline-block;
+  background: #f3f3f3;
+  border-radius: var(--border-radius-pill);
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  padding: 4px 12px;
+  margin-bottom: 14px;
+}
+
+.store-contact-address {
+  color: var(--text-muted);
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
+
+.store-contact-phone {
+  display: inline-block;
+  font-weight: 700;
+  color: var(--orange);
+  text-decoration: underline;
+  margin-bottom: 16px;
+}
+
+.store-map {
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+}
+
+.store-map iframe {
+  display: block;
+}
+
+@media (max-width: 900px) {
+  .stores-contact {
+    grid-template-columns: 1fr;
+  }
+}
+
 /* Product detail */
 
 .product-detail {
@@ -1692,10 +1880,41 @@ button {
   border-bottom-color: var(--orange);
 }
 
+.admin-toolbar-filters {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
 .disposizione-tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 8px;
+}
+
+.disposizione-subrow {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.disposizione-subrow-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  flex-shrink: 0;
+}
+
+.disposizione-tabs-sm {
+  gap: 6px;
+}
+
+.chip-tab-sm {
+  padding: 5px 12px;
+  font-size: 0.68rem;
 }
 
 .chip-tab {

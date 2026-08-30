@@ -120,3 +120,17 @@ function getOrderedProducts() {
 function saveProducts(list) {
   localStorage.setItem(ADMIN_PRODUCTS_KEY, JSON.stringify(list));
 }
+
+const ORDERS_KEY = "bestStoreOrders";
+
+function getOrders() {
+  try {
+    return JSON.parse(localStorage.getItem(ORDERS_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveOrders(list) {
+  localStorage.setItem(ORDERS_KEY, JSON.stringify(list));
+}
