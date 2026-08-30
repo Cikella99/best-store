@@ -32,12 +32,21 @@
       <div class="admin-toolbar">
         <p class="admin-count"><strong id="product-count">0</strong> prodotti nel catalogo</p>
         <div class="admin-toolbar-actions">
+          <input type="search" id="product-search" class="admin-search" placeholder="Cerca per brand o modello...">
+          <div class="view-toggle">
+            <button type="button" class="view-btn active" data-view="table" aria-label="Vista elenco">
+              <svg viewBox="0 0 24 24" fill="none"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </button>
+            <button type="button" class="view-btn" data-view="grid" aria-label="Vista blocchi">
+              <svg viewBox="0 0 24 24" fill="none"><rect x="4" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="4" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="4" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/><rect x="13" y="13" width="7" height="7" rx="1.5" stroke="currentColor" stroke-width="2"/></svg>
+            </button>
+          </div>
           <button type="button" class="link-btn" id="reset-catalog-btn">Ripristina catalogo originale</button>
           <button type="button" class="btn btn-primary" id="add-product-btn">+ Aggiungi prodotto</button>
         </div>
       </div>
 
-      <div class="admin-table-wrap">
+      <div class="admin-table-wrap" id="view-table">
         <table class="admin-table">
           <thead>
             <tr>
@@ -52,9 +61,12 @@
           </thead>
           <tbody id="admin-table-body"></tbody>
         </table>
-        <div id="admin-empty" class="cart-empty" hidden>
-          <p>Nessun prodotto nel catalogo.</p>
-        </div>
+      </div>
+
+      <div class="admin-products-grid" id="view-grid" hidden></div>
+
+      <div id="admin-empty" class="cart-empty" hidden>
+        <p>Nessun prodotto trovato.</p>
       </div>
     </section>
 
@@ -106,7 +118,8 @@
         </div>
 
         <label>Brand
-          <input type="text" id="product-brand" required placeholder="Es. Nike">
+          <input type="text" id="product-brand" required placeholder="Scrivi o scegli un brand" list="brand-datalist" autocomplete="off">
+          <datalist id="brand-datalist"></datalist>
         </label>
 
         <label>Modello
@@ -135,12 +148,39 @@
         </label>
 
         <div class="admin-form-row">
+          <label>Tipologia
+            <select id="product-type">
+              <option value="">Nessuna</option>
+              <option value="running">Running</option>
+              <option value="lifestyle">Lifestyle</option>
+              <option value="basket">Basket</option>
+              <option value="trail">Trail</option>
+            </select>
+          </label>
+          <div class="admin-color-field">
+            <span class="admin-color-label">Colore</span>
+            <div class="color-panel admin-color-panel">
+              <label class="color-swatch beige" title="Beige"><input type="radio" name="product-color" value="beige"></label>
+              <label class="color-swatch red-pink" title="Rosso / Rosa"><input type="radio" name="product-color" value="red-pink"></label>
+              <label class="color-swatch green" title="Verde"><input type="radio" name="product-color" value="green"></label>
+              <label class="color-swatch black-grey" title="Nero / Grigio"><input type="radio" name="product-color" value="black-grey"></label>
+              <label class="color-swatch white-grey" title="Bianco / Grigio"><input type="radio" name="product-color" value="white-grey"></label>
+            </div>
+          </div>
+        </div>
+
+        <div class="admin-form-row">
           <label>Prezzo (€)
             <input type="number" id="product-price" required min="0" step="1" placeholder="189">
           </label>
           <label>Prezzo pieno (opzionale)
             <input type="number" id="product-oldprice" min="0" step="1" placeholder="es. 229 se in sconto">
           </label>
+        </div>
+
+        <div id="sizes-row" hidden>
+          <span class="admin-color-label">Magazzino per taglia (paia disponibili)</span>
+          <div class="sizes-stock-grid" id="sizes-stock-grid"></div>
         </div>
 
         <label>Descrizione

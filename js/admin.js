@@ -15,6 +15,7 @@ function adminImgSrc(path) {
 
 const CATEGORY_LABELS = { shoes: "Scarpe", clothing: "Abbigliamento", accessories: "Accessori" };
 const GENDER_LABELS = { men: "Uomo", woman: "Donna", unisex: "Unisex" };
+const SIZE_LIST = ["39", "40", "41", "42", "43", "44", "45"];
 
 const SUBCATEGORY_OPTIONS = {
   clothing: [
@@ -32,19 +33,26 @@ const SUBCATEGORY_OPTIONS = {
 
 document.addEventListener("DOMContentLoaded", () => {
   const tableBody = document.getElementById("admin-table-body");
+  const viewTable = document.getElementById("view-table");
+  const viewGrid = document.getElementById("view-grid");
   const emptyState = document.getElementById("admin-empty");
   const countEl = document.getElementById("product-count");
+  const searchInput = document.getElementById("product-search");
 
   const modalBackdrop = document.getElementById("admin-modal-backdrop");
   const modalTitle = document.getElementById("admin-modal-title");
   const form = document.getElementById("product-form");
   const idField = document.getElementById("product-id");
   const brandField = document.getElementById("product-brand");
+  const brandDatalist = document.getElementById("brand-datalist");
   const modelField = document.getElementById("product-model");
   const categoryField = document.getElementById("product-category");
   const genderField = document.getElementById("product-gender");
   const subcategoryField = document.getElementById("product-subcategory");
   const subcategoryRow = document.getElementById("subcategory-row");
+  const typeField = document.getElementById("product-type");
+  const sizesRow = document.getElementById("sizes-row");
+  const sizesGrid = document.getElementById("sizes-stock-grid");
   const priceField = document.getElementById("product-price");
   const oldPriceField = document.getElementById("product-oldprice");
   const descField = document.getElementById("product-desc");
@@ -54,6 +62,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   let products = getProducts();
   let currentImage = "";
+  let currentView = "table";
 
   /* ---------- Tabs ---------- */
 
@@ -67,31 +76,79 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
-  /* ---------- Product table ---------- */
+  /* ---------- View toggle ---------- */
+
+  document.querySelectorAll(".view-btn").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      document.querySelectorAll(".view-btn").forEach((b) => b.classList.remove("active"));
+      btn.classList.add("active");
+      currentView = btn.dataset.view;
+      viewTable.hidden = currentView !== "table";
+      viewGrid.hidden = currentView !== "grid";
+      render();
+    });
+  });
+
+  searchInput.addEventListener("input", render);
+
+  /* ---------- Product list (table + grid) ---------- */
+
+  function getFilteredProducts() {
+    const term = searchInput.value.trim().toLowerCase();
+    if (!term) return products;
+    return products.filter((p) => `${p.brand} ${p.model}`.toLowerCase().includes(term));
+  }
+
+  function productRowHTML(p) {
+    const discount = discountPercentAdmin(p);
+    return `
+      <tr data-id="${p.id}">
+        <td><img class="admin-thumb" src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}"></td>
+        <td>${p.model}</td>
+        <td>${p.brand}</td>
+        <td>${CATEGORY_LABELS[p.category] || "&mdash;"}</td>
+        <td>€${p.price}${p.oldPrice ? ` <span class="price-old">€${p.oldPrice}</span>` : ""}</td>
+        <td>${discount ? `-${discount}%` : "&mdash;"}</td>
+        <td class="admin-row-actions">
+          <button type="button" class="link-btn edit-btn">Modifica</button>
+          <button type="button" class="link-btn delete-btn">Elimina</button>
+        </td>
+      </tr>`;
+  }
+
+  function productCardHTMLAdmin(p) {
+    const discount = discountPercentAdmin(p);
+    return `
+      <div class="admin-product-card" data-id="${p.id}">
+        <img src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}">
+        <span class="apc-brand">${p.brand}</span>
+        <span class="apc-title">${p.model}</span>
+        <span class="apc-meta">${CATEGORY_LABELS[p.category] || ""}</span>
+        <span class="apc-price">€${p.price}${discount ? ` <span class="price-old">€${p.oldPrice}</span> -${discount}%` : ""}</span>
+        <div class="apc-actions">
+          <button type="button" class="link-btn edit-btn">Modifica</button>
+          <button type="button" class="link-btn delete-btn">Elimina</button>
+        </div>
+      </div>`;
+  }
 
   function render() {
+    const filtered = getFilteredProducts();
     countEl.textContent = products.length;
-    emptyState.hidden = products.length > 0;
+    emptyState.hidden = filtered.length > 0;
 
-    tableBody.innerHTML = products
-      .map((p) => {
-        const discount = discountPercentAdmin(p);
-        return `
-          <tr data-id="${p.id}">
-            <td><img class="admin-thumb" src="${adminImgSrc(p.image)}" alt="${p.brand} ${p.model}"></td>
-            <td>${p.model}</td>
-            <td>${p.brand}</td>
-            <td>${CATEGORY_LABELS[p.category] || "&mdash;"}</td>
-            <td>€${p.price}${p.oldPrice ? ` <span class="price-old">€${p.oldPrice}</span>` : ""}</td>
-            <td>${discount ? `-${discount}%` : "&mdash;"}</td>
-            <td class="admin-row-actions">
-              <button type="button" class="link-btn edit-btn">Modifica</button>
-              <button type="button" class="link-btn delete-btn">Elimina</button>
-            </td>
-          </tr>`;
-      })
-      .join("");
+    tableBody.innerHTML = filtered.map(productRowHTML).join("");
+    viewGrid.innerHTML = filtered.map(productCardHTMLAdmin).join("");
+
+    populateBrandDatalist();
   }
+
+  function populateBrandDatalist() {
+    const brands = [...new Set(products.map((p) => p.brand))].sort();
+    brandDatalist.innerHTML = brands.map((b) => `<option value="${b}">`).join("");
+  }
+
+  /* ---------- Modal: subcategory, sizes ---------- */
 
   function updateSubcategoryOptions(category, selectedValue) {
     const options = SUBCATEGORY_OPTIONS[category] || [];
@@ -105,13 +162,44 @@ document.addEventListener("DOMContentLoaded", () => {
     if (selectedValue) subcategoryField.value = selectedValue;
   }
 
-  categoryField.addEventListener("change", () => updateSubcategoryOptions(categoryField.value));
+  function buildSizesGrid(category, existingSizes) {
+    if (category !== "shoes") {
+      sizesRow.hidden = true;
+      sizesGrid.innerHTML = "";
+      return;
+    }
+    sizesRow.hidden = false;
+    const sizes = existingSizes || {};
+    sizesGrid.innerHTML = SIZE_LIST.map(
+      (size) => `
+        <label class="size-stock-item">
+          <span>${size}</span>
+          <input type="number" min="0" step="1" data-size="${size}" value="${sizes[size] || 0}">
+        </label>`
+    ).join("");
+
+    sizesGrid.querySelectorAll("input").forEach((input) => {
+      input.addEventListener("focus", () => input.select());
+    });
+  }
+
+  categoryField.addEventListener("change", () => {
+    updateSubcategoryOptions(categoryField.value);
+    buildSizesGrid(categoryField.value);
+  });
+
+  function setColorSelection(value) {
+    document.querySelectorAll('input[name="product-color"]').forEach((r) => {
+      r.checked = r.value === value;
+    });
+  }
 
   function openModal(product) {
     form.reset();
     imagePreview.hidden = true;
     imagePlaceholder.hidden = false;
     currentImage = "";
+    setColorSelection(null);
 
     if (product) {
       modalTitle.textContent = "Modifica prodotto";
@@ -121,6 +209,9 @@ document.addEventListener("DOMContentLoaded", () => {
       categoryField.value = product.category || "shoes";
       genderField.value = product.gender || "unisex";
       updateSubcategoryOptions(categoryField.value, product.subcategory);
+      buildSizesGrid(categoryField.value, product.sizes);
+      typeField.value = product.type || "";
+      setColorSelection(product.color);
       priceField.value = product.price;
       oldPriceField.value = product.oldPrice || "";
       descField.value = product.desc || "";
@@ -134,6 +225,7 @@ document.addEventListener("DOMContentLoaded", () => {
       categoryField.value = "shoes";
       genderField.value = "unisex";
       updateSubcategoryOptions("shoes");
+      buildSizesGrid("shoes");
     }
 
     modalBackdrop.hidden = false;
@@ -163,10 +255,10 @@ document.addEventListener("DOMContentLoaded", () => {
     reader.readAsDataURL(file);
   });
 
-  tableBody.addEventListener("click", (e) => {
-    const row = e.target.closest("tr");
-    if (!row) return;
-    const id = row.dataset.id;
+  function handleListClick(e) {
+    const item = e.target.closest("[data-id]");
+    if (!item) return;
+    const id = item.dataset.id;
     const product = products.find((p) => p.id === id);
 
     if (e.target.closest(".edit-btn")) {
@@ -178,7 +270,10 @@ document.addEventListener("DOMContentLoaded", () => {
         render();
       }
     }
-  });
+  }
+
+  tableBody.addEventListener("click", handleListClick);
+  viewGrid.addEventListener("click", handleListClick);
 
   document.getElementById("reset-catalog-btn").addEventListener("click", () => {
     if (confirm("Ripristinare il catalogo originale? Le modifiche fatte da questo pannello andranno perse.")) {
@@ -192,18 +287,28 @@ document.addEventListener("DOMContentLoaded", () => {
     e.preventDefault();
 
     const id = idField.value;
+    const selectedColor = document.querySelector('input[name="product-color"]:checked');
     const data = {
       brand: brandField.value.trim(),
       model: modelField.value.trim(),
       category: categoryField.value,
       gender: genderField.value,
       subcategory: subcategoryRow.hidden ? "" : subcategoryField.value,
+      type: typeField.value,
+      color: selectedColor ? selectedColor.value : "",
       price: Number(priceField.value),
       desc: descField.value.trim(),
       image: currentImage || "images/logo.jpeg"
     };
     if (oldPriceField.value) {
       data.oldPrice = Number(oldPriceField.value);
+    }
+    if (!sizesRow.hidden) {
+      const sizes = {};
+      sizesGrid.querySelectorAll("input[data-size]").forEach((input) => {
+        sizes[input.dataset.size] = Number(input.value) || 0;
+      });
+      data.sizes = sizes;
     }
 
     if (id) {

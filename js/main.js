@@ -177,12 +177,28 @@ function renderProductDetail() {
   const related = products.filter((p) => p.id !== product.id).slice(0, 4);
   document.getElementById("related-grid").innerHTML = related.map(productCardHTML).join("");
 
-  document.querySelectorAll(".size-pill").forEach((pill) => {
-    pill.addEventListener("click", () => {
-      document.querySelectorAll(".size-pill").forEach((p) => p.classList.remove("selected"));
-      pill.classList.add("selected");
-    });
-  });
+  const sizeBlock = document.getElementById("size-block");
+  const sizeList = document.getElementById("size-list");
+  if (sizeBlock && sizeList) {
+    if (product.category && product.category !== "shoes") {
+      sizeBlock.hidden = true;
+    } else {
+      sizeBlock.hidden = false;
+      const SIZE_LIST = ["39", "40", "41", "42", "43", "44", "45"];
+      sizeList.innerHTML = SIZE_LIST.map((size) => {
+        const stock = product.sizes ? product.sizes[size] || 0 : 1;
+        const outOfStock = !!product.sizes && stock <= 0;
+        return `<button type="button" class="size-pill${outOfStock ? " out-of-stock" : ""}"${outOfStock ? " disabled" : ""}>${size}</button>`;
+      }).join("");
+
+      sizeList.querySelectorAll(".size-pill:not(.out-of-stock)").forEach((pill) => {
+        pill.addEventListener("click", () => {
+          sizeList.querySelectorAll(".size-pill").forEach((p) => p.classList.remove("selected"));
+          pill.classList.add("selected");
+        });
+      });
+    }
+  }
 
   let qty = 1;
   const qtyValue = document.getElementById("detail-qty-value");
