@@ -1,3 +1,23 @@
+// Each photo in a product's gallery has a matching background: the 1st photo
+// uses the site's default background (set in CSS), the 2nd/3rd/4th swap in
+// the corresponding "angolazione" image. Wraps around for longer galleries.
+const PRODUCT_IMAGE_BACKGROUNDS = [
+  "images/background image scarpe.webp",
+  "images/angolazione 2.webp",
+  "images/angolazione 3.webp",
+  "images/angolazione 4.webp"
+];
+
+function applyImageBackground(el, index) {
+  if (!el) return;
+  if (index === 0) {
+    el.style.backgroundImage = "";
+  } else {
+    const bg = PRODUCT_IMAGE_BACKGROUNDS[index % PRODUCT_IMAGE_BACKGROUNDS.length];
+    el.style.backgroundImage = `url("${bg}")`;
+  }
+}
+
 const CART_KEY = "bestStoreCart";
 
 function getCart() {
@@ -173,6 +193,7 @@ function renderProductDetail() {
     detailIndex = (i + images.length) % images.length;
     detailImageEl.src = images[detailIndex];
     detailDots.querySelectorAll(".product-image-dot").forEach((d, di) => d.classList.toggle("active", di === detailIndex));
+    applyImageBackground(document.querySelector(".product-detail-image"), detailIndex);
   }
 
   detailImageEl.src = images[0];
@@ -547,6 +568,7 @@ function cycleCardImage(wrap, direction) {
   wrap.dataset.index = next;
   const img = wrap.querySelector(".product-image img");
   if (img) img.src = images[next];
+  applyImageBackground(wrap.querySelector(".product-image"), next);
   wrap.querySelectorAll(".product-image-dot").forEach((d, i) => d.classList.toggle("active", i === next));
 }
 

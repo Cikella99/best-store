@@ -848,6 +848,17 @@ button {
   opacity: 0.9;
 }
 
+.store-card-map {
+  width: 100%;
+  border-radius: var(--border-radius-md);
+  overflow: hidden;
+  border: 3px solid #ffffff;
+}
+
+.store-card-map iframe {
+  display: block;
+}
+
 @media (max-width: 900px) {
   .stores-grid {
     grid-template-columns: 1fr;
@@ -2000,8 +2011,9 @@ button {
 }
 
 .chip-tab-sm {
-  padding: 5px 12px;
-  font-size: 0.68rem;
+  padding: 3px 9px;
+  font-size: 0.62rem;
+  border-width: 1px;
 }
 
 .chip-tab {

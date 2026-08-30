@@ -56,8 +56,9 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalTitle = document.getElementById("admin-modal-title");
   const form = document.getElementById("product-form");
   const idField = document.getElementById("product-id");
-  const brandField = document.getElementById("product-brand");
-  const brandDatalist = document.getElementById("brand-datalist");
+  const brandSelect = document.getElementById("product-brand-select");
+  const brandCustomRow = document.getElementById("product-brand-custom-row");
+  const brandCustomInput = document.getElementById("product-brand-custom");
   const modelField = document.getElementById("product-model");
   const categoryField = document.getElementById("product-category");
   const genderField = document.getElementById("product-gender");
@@ -194,7 +195,7 @@ document.addEventListener("DOMContentLoaded", () => {
     const filtered = getFilteredSorted();
     countEl.textContent = products.length;
     emptyState.hidden = filtered.length > 0;
-    populateBrandDatalist();
+    populateBrandDropdown();
 
     if (currentView === "table") {
       viewTable.hidden = false;
@@ -209,10 +210,21 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  function populateBrandDatalist() {
+  function populateBrandDropdown(selectedBrand) {
     const brands = [...new Set(products.map((p) => p.brand))].sort();
-    brandDatalist.innerHTML = brands.map((b) => `<option value="${b}">`).join("");
+    brandSelect.innerHTML =
+      `<option value="" disabled${selectedBrand ? "" : " selected"}>Seleziona un brand</option>` +
+      brands.map((b) => `<option value="${b}">${b}</option>`).join("") +
+      `<option value="__other__">Altro</option>`;
+    if (selectedBrand) brandSelect.value = brands.includes(selectedBrand) ? selectedBrand : "__other__";
   }
+
+  brandSelect.addEventListener("change", () => {
+    const isOther = brandSelect.value === "__other__";
+    brandCustomRow.hidden = !isOther;
+    brandCustomInput.required = isOther;
+    if (isOther) brandCustomInput.focus();
+  });
 
   /* ---------- Click to open, delete button, drag reorder ---------- */
 
@@ -383,10 +395,14 @@ document.addEventListener("DOMContentLoaded", () => {
     renderImageGallery();
     setColorSelection(null);
 
+    brandCustomRow.hidden = true;
+    brandCustomInput.value = "";
+    brandCustomInput.required = false;
+
     if (product) {
       modalTitle.textContent = "Modifica prodotto";
       idField.value = product.id;
-      brandField.value = product.brand;
+      populateBrandDropdown(product.brand);
       modelField.value = product.model;
       categoryField.value = product.category || "shoes";
       genderField.value = product.gender || "unisex";
@@ -400,6 +416,7 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       modalTitle.textContent = "Aggiungi prodotto";
       idField.value = "";
+      populateBrandDropdown();
       categoryField.value = "shoes";
       genderField.value = "unisex";
       updateSubcategoryOptions("shoes");
@@ -440,8 +457,9 @@ document.addEventListener("DOMContentLoaded", () => {
 
     const id = idField.value;
     const selectedColor = document.querySelector('input[name="product-color"]:checked');
+    const brand = brandSelect.value === "__other__" ? brandCustomInput.value.trim() : brandSelect.value;
     const data = {
-      brand: brandField.value.trim(),
+      brand,
       model: modelField.value.trim(),
       category: categoryField.value,
       gender: genderField.value,
@@ -484,6 +502,16 @@ document.addEventListener("DOMContentLoaded", () => {
   const ordersCountEl = document.getElementById("orders-count");
   const ordersTableBody = document.getElementById("orders-table-body");
   const ordersEmpty = document.getElementById("orders-empty");
+  const ordersSearchInput = document.getElementById("orders-search");
+
+  function matchesOrderSearch(order) {
+    const term = ordersSearchInput.value.trim().toLowerCase();
+    if (!term) return true;
+    const haystack = `${order.id} ${order.items.map((it) => `${it.brand} ${it.model}`).join(" ")}`.toLowerCase();
+    return haystack.includes(term);
+  }
+
+  ordersSearchInput.addEventListener("input", renderOrders);
 
   function orderRowHTML(order) {
     const date = new Date(order.createdAt).toLocaleDateString("it-IT", { day: "2-digit", month: "2-digit", year: "numeric" });
@@ -504,8 +532,12 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function renderOrders() {
-    const orders = getOrders().slice().sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
-    ordersCountEl.textContent = orders.length;
+    const allOrders = getOrders();
+    const orders = allOrders
+      .filter(matchesOrderSearch)
+      .slice()
+      .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));
+    ordersCountEl.textContent = allOrders.length;
     ordersEmpty.hidden = orders.length > 0;
     ordersTableBody.innerHTML = orders.map(orderRowHTML).join("");
 

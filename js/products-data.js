@@ -145,11 +145,42 @@ function saveProducts(list) {
 
 const ORDERS_KEY = "bestStoreOrders";
 
+const ORDERS_SEED = [
+  {
+    id: "BS-7F2K9A",
+    createdAt: "2026-08-18T09:24:00.000Z",
+    status: "delivered",
+    items: [
+      { id: "05", brand: "Nike", model: "Zoom Vomero 5", price: 189, qty: 1, image: "images/shoes/scarpe-05.webp" },
+      { id: "06", brand: "Adidas", model: "Samba Leopard", price: 159, qty: 1, image: "images/shoes/scarpe-06.webp" }
+    ],
+    total: 348
+  },
+  {
+    id: "BS-3M8Q1D",
+    createdAt: "2026-08-25T15:47:00.000Z",
+    status: "shipping",
+    items: [{ id: "07", brand: "Jordan", model: "4 Retro Red Thunder", price: 259, qty: 2, image: "images/shoes/scarpe-07.webp" }],
+    total: 518
+  },
+  {
+    id: "BS-9X4T7B",
+    createdAt: "2026-08-29T11:03:00.000Z",
+    status: "received",
+    items: [
+      { id: "13", brand: "Vans", model: "Authentic Red Stars", price: 89, qty: 1, image: "images/shoes/scarpe-13-1.webp" },
+      { id: "10", brand: "Onitsuka Tiger", model: "Mexico 66", price: 119, qty: 1, image: "images/shoes/scarpe-10.webp" }
+    ],
+    total: 208
+  }
+];
+
 function getOrders() {
   try {
-    return JSON.parse(localStorage.getItem(ORDERS_KEY)) || [];
+    const stored = localStorage.getItem(ORDERS_KEY);
+    return stored ? JSON.parse(stored) : ORDERS_SEED;
   } catch {
-    return [];
+    return ORDERS_SEED;
   }
 }
 
