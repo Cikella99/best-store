@@ -505,13 +505,11 @@ function sizeHeroToViewport() {
 
   const announcement = document.querySelector(".announcement-bar");
   const header = document.querySelector(".site-header");
-  const trustStrip = document.getElementById("below-hero");
 
   const used =
     (announcement ? announcement.offsetHeight : 0) +
     (header ? header.offsetHeight : 0) +
-    (trustStrip ? trustStrip.offsetHeight : 0) +
-    32;
+    24;
 
   heroInner.style.minHeight = `calc(100vh - ${used}px)`;
 }

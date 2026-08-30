@@ -412,7 +412,7 @@ button {
 /* Trust strip */
 
 .trust-strip {
-  margin-bottom: 48px;
+  margin: 8px 0 48px;
 }
 
 .trust-strip-inner {
@@ -722,18 +722,22 @@ button {
 .newsletter-form {
   display: inline-flex;
   align-items: center;
-  border: 2px solid var(--orange);
-  border-radius: var(--border-radius-pill);
-  padding: 6px 6px 6px 20px;
   gap: 12px;
 }
 
 .newsletter-form input {
-  border: none;
+  border: 2px solid var(--orange);
+  border-radius: var(--border-radius-pill);
   outline: none;
   font-family: inherit;
   font-size: 0.9rem;
-  min-width: 220px;
+  padding: 12px 20px;
+  min-width: 240px;
+  transition: border-color 0.2s ease;
+}
+
+.newsletter-form input:focus {
+  border-color: var(--orange-dark);
 }
 
 /* Footer */
@@ -1607,6 +1611,13 @@ button {
 }
 
 @media (max-width: 560px) {
+  .announcement-bar {
+    font-size: 0.66rem;
+    padding: 8px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
   .header-inner {
     flex-wrap: wrap;
   }
@@ -1620,8 +1631,18 @@ button {
     grid-template-columns: 1fr;
   }
   .newsletter-form {
-    flex-wrap: wrap;
-    justify-content: center;
+    flex-direction: column;
+    align-items: stretch;
+    width: 100%;
+    max-width: 320px;
+    margin: 0 auto;
+  }
+  .newsletter-form input {
+    width: 100%;
+    min-width: 0;
+  }
+  .newsletter-form .btn {
+    width: 100%;
   }
   .footer-top {
     grid-template-columns: 1fr;
